@@ -18,14 +18,14 @@ public class PageRC {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPages() {
-        return Response.ok(pageDS.getPages()).build();
+        return Response.ok(pageDS.getAll()).build();
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPage(Long id) {
-        return Response.ok(pageDS.getPage(id)).build();
+        return Response.ok(pageDS.get(id)).build();
     }
 
     @POST

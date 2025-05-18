@@ -19,11 +19,11 @@ public class PageDS {
     @Inject
     PageRepository pageRepository;
 
-    public List<PageDTO> getPages() {
+    public List<PageDTO> getAll() {
         return pageRepository.streamAll().map(PageDTO::fromEntity).collect(Collectors.toList());
     }
 
-    public PageDTO getPage(Long id) {
+    public PageDTO get(Long id) {
         PageEntity pageEntity = pageRepository.findById(id);
 
         if (pageEntity == null) {
@@ -36,7 +36,7 @@ public class PageDS {
     @Transactional
     public PageDTO create(CreatePageDTO dto) {
         PageEntity pageEntity = dto.toEntity();
-        pageEntity.persist();
+        pageRepository.persist(pageEntity);
         return PageDTO.fromEntity(pageEntity);
     }
 
@@ -50,7 +50,7 @@ public class PageDS {
 
         pageEntity.name = dto.name();
         pageEntity.content = dto.content();
-        pageEntity.persist();
+        pageRepository.persist(pageEntity);
 
         return PageDTO.fromEntity(pageEntity);
     }
@@ -63,7 +63,7 @@ public class PageDS {
             throw new PageNotFoundException(id);
         }
 
-        pageEntity.delete();
+        pageRepository.delete(pageEntity);
     }
 
 }
