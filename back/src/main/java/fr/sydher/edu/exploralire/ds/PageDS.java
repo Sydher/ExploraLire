@@ -23,14 +23,19 @@ public class PageDS {
         return pageRepository.streamAll().map(PageDTO::fromEntity).collect(Collectors.toList());
     }
 
-    public PageDTO get(Long id) {
+    public PageDTO get(Long id) throws PageNotFoundException {
+        PageEntity pageEntity = getEntity(id);
+        return PageDTO.fromEntity(pageEntity);
+    }
+
+    protected PageEntity getEntity(Long id) throws PageNotFoundException {
         PageEntity pageEntity = pageRepository.findById(id);
 
         if (pageEntity == null) {
             throw new PageNotFoundException(id);
         }
 
-        return PageDTO.fromEntity(pageEntity);
+        return pageEntity;
     }
 
     @Transactional
@@ -41,7 +46,7 @@ public class PageDS {
     }
 
     @Transactional
-    public PageDTO update(Long id, UpdatePageDTO dto) {
+    public PageDTO update(Long id, UpdatePageDTO dto) throws PageNotFoundException {
         PageEntity pageEntity = pageRepository.findById(id);
 
         if (pageEntity == null) {
@@ -56,7 +61,7 @@ public class PageDS {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id) throws PageNotFoundException {
         PageEntity pageEntity = pageRepository.findById(id);
 
         if (pageEntity == null) {

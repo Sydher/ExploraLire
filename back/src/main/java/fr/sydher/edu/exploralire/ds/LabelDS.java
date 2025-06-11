@@ -23,14 +23,19 @@ public class LabelDS {
         return labelRepository.streamAll().map(LabelDTO::fromEntity).collect(Collectors.toList());
     }
 
-    public LabelDTO get(Long id) {
+    public LabelDTO get(Long id) throws LabelNotFoundException {
+        LabelEntity labelEntity = getEntity(id);
+        return LabelDTO.fromEntity(labelEntity);
+    }
+
+    protected LabelEntity getEntity(Long id) throws LabelNotFoundException {
         LabelEntity labelEntity = labelRepository.findById(id);
 
         if (labelEntity == null) {
             throw new LabelNotFoundException(id);
         }
 
-        return LabelDTO.fromEntity(labelEntity);
+        return labelEntity;
     }
 
     @Transactional
@@ -41,7 +46,7 @@ public class LabelDS {
     }
 
     @Transactional
-    public LabelDTO update(Long id, UpdateLabelDTO dto) {
+    public LabelDTO update(Long id, UpdateLabelDTO dto) throws LabelNotFoundException {
         LabelEntity labelEntity = labelRepository.findById(id);
 
         if (labelEntity == null) {
@@ -55,7 +60,7 @@ public class LabelDS {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id) throws LabelNotFoundException {
         LabelEntity labelEntity = labelRepository.findById(id);
 
         if (labelEntity == null) {
