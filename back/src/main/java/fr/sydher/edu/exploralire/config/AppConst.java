@@ -10,6 +10,6 @@ public class AppConst {
 
     // Log
     public static final String LOG_ERROR_UNKNOW = "Erreur inconnue. Réponse par défaut.";
-    public static final String LOG_NOTHING_DETTACH = "Nothing to dettach.";
+    public static final String LOG_NOTHING_DETACH = "Nothing to detach.";
 
 }

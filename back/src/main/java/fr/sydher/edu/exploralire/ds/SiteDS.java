@@ -95,7 +95,7 @@ public class SiteDS {
     }
 
     @Transactional
-    public SiteDTO dettachPage(DettachPageToSiteDTO dto) throws SiteNotFoundException {
+    public SiteDTO detachPage(DetachPageToSiteDTO dto) throws SiteNotFoundException {
         SiteEntity siteEntity = siteRepository.findById(dto.siteId());
 
         if (siteEntity == null) {
@@ -103,7 +103,7 @@ public class SiteDS {
         }
 
         if (siteEntity.pages == null) {
-            LOG.warn(AppConst.LOG_NOTHING_DETTACH);
+            LOG.warn(AppConst.LOG_NOTHING_DETACH);
             return SiteDTO.fromEntity(siteEntity);
         }
 

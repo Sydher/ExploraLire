@@ -390,11 +390,11 @@ class SiteDSTest {
     @Test
     void detach_ok_to_empty() {
         // Given
-        DettachPageToSiteDTO dto = new DettachPageToSiteDTO(1L, Set.of(1L, 2L));
+        DetachPageToSiteDTO dto = new DetachPageToSiteDTO(1L, Set.of(1L, 2L));
         when(siteRepository.findById(1L)).thenReturn(s1);
 
         // When
-        SiteDTO result = siteDS.dettachPage(dto);
+        SiteDTO result = siteDS.detachPage(dto);
 
         // Then
         assertEquals("s1", result.name());
@@ -404,13 +404,13 @@ class SiteDSTest {
     @Test
     void detach_ok_to_not_empty() {
         // Given
-        DettachPageToSiteDTO dto = new DettachPageToSiteDTO(5L, Set.of(1L));
+        DetachPageToSiteDTO dto = new DetachPageToSiteDTO(5L, Set.of(1L));
         when(siteRepository.findById(5L)).thenReturn(s5);
         doNothing().when(siteRepository).persist(any(SiteEntity.class));
         ArgumentCaptor<SiteEntity> siteEntityAC = ArgumentCaptor.forClass(SiteEntity.class);
 
         // When
-        SiteDTO result = siteDS.dettachPage(dto);
+        SiteDTO result = siteDS.detachPage(dto);
 
         // Then
         assertEquals("s5 with labels and pages", result.name());
@@ -425,12 +425,12 @@ class SiteDSTest {
     @Test
     void detach_ko() {
         // Given
-        DettachPageToSiteDTO dto = new DettachPageToSiteDTO(1L, Set.of(1L, 2L));
+        DetachPageToSiteDTO dto = new DetachPageToSiteDTO(1L, Set.of(1L, 2L));
         when(siteRepository.findById(1L)).thenReturn(null);
         doNothing().when(siteRepository).persist(any(SiteEntity.class));
 
         // When-Then
-        assertThrows(SiteNotFoundException.class, () -> siteDS.dettachPage(dto));
+        assertThrows(SiteNotFoundException.class, () -> siteDS.detachPage(dto));
         verify(siteRepository, times(0)).persist(any(SiteEntity.class));
     }
 

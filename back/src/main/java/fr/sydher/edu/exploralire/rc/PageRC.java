@@ -17,21 +17,21 @@ public class PageRC {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPages() {
+    public Response getAll() {
         return Response.ok(pageDS.getAll()).build();
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPage(Long id) {
+    public Response get(Long id) {
         return Response.ok(pageDS.get(id)).build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createPage(@Valid CreatePageDTO createPageDTO) {
+    public Response create(@Valid CreatePageDTO createPageDTO) {
         return Response.ok(pageDS.create(createPageDTO)).build();
     }
 
@@ -39,14 +39,14 @@ public class PageRC {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updatePage(Long id, @Valid UpdatePageDTO updatePageDTO) {
+    public Response update(Long id, @Valid UpdatePageDTO updatePageDTO) {
         return Response.ok(pageDS.update(id, updatePageDTO)).build();
     }
 
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deletePage(Long id) {
+    public Response delete(Long id) {
         pageDS.delete(id);
         return Response.ok().build();
     }
