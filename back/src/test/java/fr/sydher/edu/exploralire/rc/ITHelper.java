@@ -24,6 +24,7 @@ public abstract class ITHelper {
      */
     protected void get(HttpClient client,
                        String url,
+                       HttpStatus httpStatus,
                        JsonPathMessageValidationContext.Builder validator) {
         testCaseRunner.when(http()
                 .client(client)
@@ -36,11 +37,17 @@ public abstract class ITHelper {
         testCaseRunner.then(http()
                 .client(client)
                 .receive()
-                .response(HttpStatus.OK)
+                .response(httpStatus)
                 .message()
                 .type(MessageType.JSON)
                 .validate(validator)
         );
+    }
+
+    protected void get(HttpClient client,
+                       String url,
+                       JsonPathMessageValidationContext.Builder validator) {
+        get(client, url, HttpStatus.OK, validator);
     }
 
     /**
@@ -71,6 +78,60 @@ public abstract class ITHelper {
                 .message()
                 .type(MessageType.JSON)
                 .validate(validator)
+        );
+    }
+
+    /**
+     * IT Test method for PUT API calls.
+     *
+     * @param client    the HTTP Client to call
+     * @param url       the targeted URL
+     * @param body      the body of the call
+     * @param validator the validation to check
+     */
+    protected void put(HttpClient client,
+                       String url,
+                       String body,
+                       JsonPathMessageValidationContext.Builder validator) {
+        testCaseRunner.when(http()
+                .client(client)
+                .send()
+                .put(url)
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(body)
+        );
+
+        testCaseRunner.then(http()
+                .client(client)
+                .receive()
+                .response(HttpStatus.OK)
+                .message()
+                .type(MessageType.JSON)
+                .validate(validator)
+        );
+    }
+
+    /**
+     * IT Test method for DELETE API calls.
+     *
+     * @param client the HTTP Client to call
+     * @param url    the targeted URL
+     */
+    protected void delete(HttpClient client,
+                          String url) {
+        testCaseRunner.when(http()
+                .client(client)
+                .send()
+                .delete(url)
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        testCaseRunner.then(http()
+                .client(client)
+                .receive()
+                .response(HttpStatus.OK)
         );
     }
 
