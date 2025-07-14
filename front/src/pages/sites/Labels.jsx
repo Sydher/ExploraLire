@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import TeacherLayout from "../../components/TeacherLayout"
-import UpsertPageForm from "./UpsertPageForm";
 
-function Pages() {
-    // Get all pages
-    const [pages, setPages] = useState([]);
+function Labels() {
+    // Get all labels
+    const [sites, setSites] = useState([]);
     useEffect(() => {
-        fetch('http://localhost:8080/api/pages')
+        fetch('http://localhost:8080/api/sites')
             .then((response) => response.json())
             .then((data) => {
                 console.debug(data);
-                setPages(data);
+                setSites(data);
             })
             .catch((err) => {
                 console.error(err.message);
@@ -39,4 +38,4 @@ function Pages() {
     )
 }
 
-export default Pages
+export default Sites

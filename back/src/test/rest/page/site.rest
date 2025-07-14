@@ -1,0 +1,26 @@
+### Get All
+GET http://localhost:8080/api/sites
+
+### Get One
+GET http://localhost:8080/api/sites/2
+
+### Create
+POST http://localhost:8080/api/sites
+Content-Type: application/json
+
+{
+  "name": "{{$random.team.name}}",
+  "content": "{{$random.alphabetic(100)}}"
+}
+
+### Update
+PUT http://localhost:8080/api/sites/2
+Content-Type: application/json
+
+{
+  "name": "zublux",
+  "content": "lorem ipsum"
+}
+
+### Delete
+DELETE http://localhost:8080/api/sites/2

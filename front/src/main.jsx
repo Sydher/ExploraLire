@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css'
 import { BrowserRouter, Route, Routes } from 'react-router'
 import Home from './pages/Home.jsx'
-import Pages from './pages/pages/Pages.jsx'
+import Sites from './pages/sites/Sites.jsx';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -11,8 +11,8 @@ createRoot(document.getElementById('root')).render(
       <Route index element={<Home />} />
 
       <Route path="sites">
-        <Route index element={<Pages />} />
-        <Route path="pages" element={<Pages />} />
+        <Route index element={<Sites />} />
+        <Route path="sites" element={<Sites />} />
       </Route>
     </Routes>
   </BrowserRouter>,
