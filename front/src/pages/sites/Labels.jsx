@@ -1,40 +1,25 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert, Button, Form, Modal, Spinner, Table } from "react-bootstrap";
 import {
-    getLabels,
     deleteLabel,
     createLabel,
     updateLabel,
 } from "../../services/LabelsApiService";
 import { toast } from "react-toastify";
 
-const ERR_LOAD = "Erreur lors de la récupération des étiquettes.";
 const ERR_SAVE = "Erreur lors de la sauvegarde.";
 const ERR_DELETE = "Erreur lors de la suppression.";
 const CONFIM_DELETE = "Voulez-vous vraiment supprimer cette étiquette ?";
 const OK_SAVE = "Etiquette enregistrée !";
 const OK_DELETE = "Etiquette supprimée !";
 
-function Labels() {
+function Labels({ labels, setLabels }) {
     // States
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [labels, setLabels] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [labelName, setLabelName] = useState("");
     const [editingLabelId, setEditingLabelId] = useState(null);
-
-    // Init
-    useEffect(() => {
-        setLoading(true);
-        getLabels()
-            .then(setLabels)
-            .catch((err) => {
-                setError(err.message);
-                toast.error(ERR_LOAD);
-            })
-            .finally(() => setLoading(false));
-    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -95,13 +80,14 @@ function Labels() {
         setEditingLabelId(null);
     };
 
+    // View
     return (
         <>
             <h2>Liste de mes étiquettes</h2>
 
             {loading && (
                 <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
+                    <span className="visually-hidden">Chargement...</span>
                 </Spinner>
             )}
             {error && <Alert variant="danger">{error}</Alert>}

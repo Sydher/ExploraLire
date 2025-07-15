@@ -25,13 +25,13 @@ const CONFIM_DELETE = "Voulez-vous vraiment supprimer ce site ?";
 const OK_SAVE = "Site enregistré !";
 const OK_DELETE = "Site supprimé !";
 
-function Sites() {
+function Sites({ labels }) {
     // States
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [sites, setSites] = useState([]);
-    const [labels, setLabels] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [labelsOptions, setLabelsOptions] = useState([]);
     const [siteName, setSiteName] = useState("");
     const [labelsId, setLabelsId] = useState([]);
     const [editingSiteId, setEditingSiteId] = useState(null);
@@ -47,6 +47,7 @@ function Sites() {
                 toast.error(ERR_LOAD);
             })
             .finally(() => setLoading(false));
+        formatLabels();
     }, []);
 
     const handleSubmit = async (event) => {
@@ -91,8 +92,9 @@ function Sites() {
         setSiteName(siteToEdit.name);
         setEditingSiteId(id);
 
+        formatLabels();
         const defaultLabels = siteToEdit.labels
-            .map((label) => labels.find((l) => l.value === label.id))
+            .map((label) => labelsOptions.find((l) => l.value === label.id))
             .filter(Boolean); // Évite les `undefined` si un id n'est pas trouvé
 
         setEditingSiteLabelsId(defaultLabels);
@@ -113,18 +115,14 @@ function Sites() {
     };
 
     const handleOpenModal = () => {
-        getLabels() // TODO à rework pour éviter les appels multiples, système d'event entre Labels.jsx et Sites.jsx ?
-            .then((data) => {
-                setLabels(
-                    data.map(({ id, name }) => ({ value: id, label: name }))
-                );
-                setShowModal(true);
-            })
-            .catch((err) => {
-                setError(err.message);
-                toast.error(ERR_LOAD);
-            })
-            .finally(() => setLoading(false));
+        formatLabels();
+        setShowModal(true);
+    };
+
+    const formatLabels = () => {
+        setLabelsOptions(
+            labels.map(({ id, name }) => ({ value: id, label: name }))
+        );
     };
 
     const handleCloseModal = () => {
@@ -133,13 +131,14 @@ function Sites() {
         setEditingSiteId(null);
     };
 
+    // View
     return (
         <>
             <h2>Liste de mes sites</h2>
 
             {loading && (
                 <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
+                    <span className="visually-hidden">Chargement...</span>
                 </Spinner>
             )}
             {error && <Alert variant="danger">{error}</Alert>}
@@ -218,6 +217,7 @@ function Sites() {
                     <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formName">
                             <Form.Label>Nom</Form.Label>
+                            {/* TODO rendre nom obligatoire */}
                             <Form.Control
                                 type="text"
                                 placeholder="Nom du site"
@@ -240,7 +240,7 @@ function Sites() {
                                     defaultValue={editingSiteLabelsId}
                                     isMulti
                                     name="colors"
-                                    options={labels}
+                                    options={labelsOptions}
                                     className="basic-multi-select"
                                     classNamePrefix="select"
                                     onChange={(newValue) => {
