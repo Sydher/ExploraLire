@@ -26,7 +26,7 @@ public class ExceptionHandler implements ExceptionMapper<Exception> {
                     .build();
         }
 
-        LOG.error(AppConst.LOG_ERROR_UNKNOW);
+        LOG.error(AppConst.LOG_ERROR_UNKNOW, e);
         return Response.serverError()
                 .type(MediaType.APPLICATION_JSON)
                 .entity(new ErrorDTO(AppConst.ERR_GENERIC))

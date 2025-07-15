@@ -6,7 +6,7 @@ public class AppConst {
     public static final String APP_NAME = "ExploraLire";
 
     // Error
-    public static final String ERR_GENERIC = "Erreur inconnue. Merci de réésayer. Si le problème persiste merci d'ouvrir un ticket sur https://github.com/Sydher/ExploraLire/issues/new";
+    public static final String ERR_GENERIC = "Erreur inconnue, merci de réessayer. Si le problème persiste, demande à ton professeur ; ce dernier pourra consulter la section d’aide du logiciel.";
 
     // Log
     public static final String LOG_ERROR_UNKNOW = "Erreur inconnue. Réponse par défaut.";

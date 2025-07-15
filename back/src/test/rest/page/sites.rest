@@ -9,8 +9,7 @@ POST http://localhost:8080/api/sites
 Content-Type: application/json
 
 {
-  "name": "{{$random.team.name}}",
-  "content": "{{$random.alphabetic(100)}}"
+  "name": "{{$random.team.name}}"
 }
 
 ### Update

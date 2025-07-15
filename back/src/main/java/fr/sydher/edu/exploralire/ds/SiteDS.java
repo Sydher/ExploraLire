@@ -32,7 +32,7 @@ public class SiteDS {
     SiteRepository siteRepository;
 
     public List<SiteDTO> getAll() {
-        return siteRepository.streamAll().map(SiteDTO::fromEntity).collect(Collectors.toList());
+        return siteRepository.listAll().stream().map(SiteDTO::fromEntity).collect(Collectors.toList());
     }
 
     public SiteDTO get(Long id) throws SiteNotFoundException {

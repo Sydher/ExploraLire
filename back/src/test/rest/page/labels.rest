@@ -1,0 +1,25 @@
+### Get All
+GET http://localhost:8080/api/labels
+
+### Get One
+GET http://localhost:8080/api/labels/2
+
+### Create
+POST http://localhost:8080/api/labels
+Content-Type: application/json
+
+{
+  "name": "{{$random.team.name}}"
+}
+
+### Update
+PUT http://localhost:8080/api/labels/2
+Content-Type: application/json
+
+{
+  "name": "zublux",
+  "content": "lorem ipsum"
+}
+
+### Delete
+DELETE http://localhost:8080/api/labels/2
