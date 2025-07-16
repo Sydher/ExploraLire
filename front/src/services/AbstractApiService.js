@@ -15,14 +15,10 @@ export const handleResponse = async (res) => {
         // Extract Quarkus violations
         let messagesViolations;
         if (data.violations) {
-            messagesViolations = data.violations
-                .map((v) => v.message)
-                .join("\n");
+            messagesViolations = data.violations.map((v) => v.message).join("\n");
         }
 
-        const error = new Error(
-            data.message || messagesViolations || ERR_GENERIC
-        );
+        const error = new Error(data.message || messagesViolations || ERR_GENERIC);
         error.status = res.status;
         error.details = data;
 

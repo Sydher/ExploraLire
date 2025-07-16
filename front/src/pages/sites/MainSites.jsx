@@ -14,7 +14,7 @@ function MainSites() {
     const [labels, setLabels] = useState([]);
 
     // Contexts
-    const { showError, error } = useError();
+    const { showError } = useError();
 
     // Init
     useEffect(() => {

@@ -1,18 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-    Badge,
-    Button,
-    Form,
-    Modal,
-    Spinner,
-    Table,
-} from "react-bootstrap";
-import {
-    getSites,
-    deleteSite,
-    createSite,
-    updateSite,
-} from "../../services/SitesApiService";
+import { Badge, Button, Form, Modal, Spinner, Table } from "react-bootstrap";
+import { getSites, deleteSite, createSite, updateSite } from "../../services/SitesApiService";
 import { toast } from "react-toastify";
 import Select from "react-select";
 import { useError } from "../../context/ErrorContext";
@@ -64,9 +52,7 @@ function Sites({ labels }) {
             // Update
             if (editingSiteId) {
                 const updated = await updateSite(editingSiteId, body);
-                setSites(
-                    sites.map((s) => (s.id === editingSiteId ? updated : s))
-                );
+                setSites(sites.map((s) => (s.id === editingSiteId ? updated : s)));
             }
             // Create
             else {
@@ -121,9 +107,7 @@ function Sites({ labels }) {
     };
 
     const formatLabels = () => {
-        setLabelsOptions(
-            labels.map(({ id, name }) => ({ value: id, label: name }))
-        );
+        setLabelsOptions(labels.map(({ id, name }) => ({ value: id, label: name })));
     };
 
     const handleCloseModal = () => {
@@ -146,11 +130,7 @@ function Sites({ labels }) {
             {!sites.length ? (
                 <p>Aucun site trouvé.</p>
             ) : (
-                <SitesTable
-                    sites={sites}
-                    handleUpdate={handleUpdate}
-                    handleDelete={handleDelete}
-                />
+                <SitesTable sites={sites} handleUpdate={handleUpdate} handleDelete={handleDelete} />
             )}
 
             <Button variant="success" onClick={handleOpenModal}>
@@ -169,9 +149,7 @@ function Sites({ labels }) {
                 editingSiteId={editingSiteId}
                 selectedLabels={editingSiteLabelsId}
                 setSelectedLabels={(newValue) =>
-                    setLabelsId(
-                        newValue ? newValue.map((opt) => opt.value) : []
-                    )
+                    setLabelsId(newValue ? newValue.map((opt) => opt.value) : [])
                 }
             />
         </>
@@ -201,10 +179,7 @@ function SitesTable({ sites, handleUpdate, handleDelete }) {
                             ) : (
                                 <>
                                     {site.labels.map((label) => (
-                                        <Badge
-                                            bg="secondary me-1"
-                                            key={label.id}
-                                        >
+                                        <Badge bg="secondary me-1" key={label.id}>
                                             {label.name}
                                         </Badge>
                                     ))}
@@ -212,18 +187,11 @@ function SitesTable({ sites, handleUpdate, handleDelete }) {
                             )}
                         </td>
                         <td>
-                            <Button
-                                variant="primary"
-                                onClick={() => handleUpdate(site.id)}
-                                className="me-2"
-                            >
+                            <Button variant="primary" onClick={() => handleUpdate(site.id)} className="me-2">
                                 <i className="bi bi-pencil-square me-1"></i>
                                 Modifier
                             </Button>
-                            <Button
-                                variant="danger"
-                                onClick={() => handleDelete(site.id)}
-                            >
+                            <Button variant="danger" onClick={() => handleDelete(site.id)}>
                                 <i className="bi bi-trash me-1"></i>
                                 Supprimer
                             </Button>
@@ -251,11 +219,7 @@ function SitesModal({
     return (
         <Modal show={showModal} onHide={handleCloseModal}>
             <Modal.Header closeButton>
-                <Modal.Title>
-                    {editingSiteId
-                        ? "Modifier le site"
-                        : "Créer un nouveau site"}
-                </Modal.Title>
+                <Modal.Title>{editingSiteId ? "Modifier le site" : "Créer un nouveau site"}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit}>
@@ -299,15 +263,8 @@ function SitesModal({
                 <Button variant="secondary" onClick={handleCloseModal}>
                     Annuler
                 </Button>
-                <Button
-                    variant={editingSiteId ? "primary" : "success"}
-                    onClick={handleSubmit}
-                >
-                    <i
-                        className={`bi ${
-                            editingSiteId ? "bi-floppy" : "bi-plus-circle"
-                        } me-1`}
-                    ></i>
+                <Button variant={editingSiteId ? "primary" : "success"} onClick={handleSubmit}>
+                    <i className={`bi ${editingSiteId ? "bi-floppy" : "bi-plus-circle"} me-1`}></i>
                     {editingSiteId ? "Sauvegarder" : "Créer"}
                 </Button>
             </Modal.Footer>

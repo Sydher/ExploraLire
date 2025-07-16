@@ -4,8 +4,7 @@ const API_URL = `${BASE_URL}/sites`;
 
 export const getSites = () => fetch(API_URL).then(handleResponse);
 
-export const deleteSite = (id) =>
-    fetch(`${API_URL}/${id}`, { method: "DELETE" });
+export const deleteSite = (id) => fetch(`${API_URL}/${id}`, { method: "DELETE" });
 
 export const createSite = (body) =>
     fetch(API_URL, {

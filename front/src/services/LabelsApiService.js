@@ -4,8 +4,7 @@ const API_URL = `${BASE_URL}/labels`;
 
 export const getLabels = () => fetch(API_URL).then(handleResponse);
 
-export const deleteLabel = (id) =>
-    fetch(`${API_URL}/${id}`, { method: "DELETE" });
+export const deleteLabel = (id) => fetch(`${API_URL}/${id}`, { method: "DELETE" });
 
 export const createLabel = (body) =>
     fetch(API_URL, {

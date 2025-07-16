@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { Button, Form, Modal, Spinner, Table } from "react-bootstrap";
-import {
-    deleteLabel,
-    createLabel,
-    updateLabel,
-} from "../../services/LabelsApiService";
+import { deleteLabel, createLabel, updateLabel } from "../../services/LabelsApiService";
 import { toast } from "react-toastify";
 import { useError } from "../../context/ErrorContext";
 
@@ -34,9 +30,7 @@ function Labels({ labels, setLabels }) {
                 const updated = await updateLabel(editingLabelId, {
                     name: labelName,
                 });
-                setLabels(
-                    labels.map((s) => (s.id === editingLabelId ? updated : s))
-                );
+                setLabels(labels.map((s) => (s.id === editingLabelId ? updated : s)));
             }
             // Create
             else {
@@ -97,11 +91,7 @@ function Labels({ labels, setLabels }) {
             {!labels.length ? (
                 <p>Aucune étiquette trouvée.</p>
             ) : (
-                <LabelsTable
-                    labels={labels}
-                    handleUpdate={handleUpdate}
-                    handleDelete={handleDelete}
-                />
+                <LabelsTable labels={labels} handleUpdate={handleUpdate} handleDelete={handleDelete} />
             )}
 
             <Button variant="success" onClick={() => setShowModal(true)}>
@@ -136,18 +126,11 @@ function LabelsTable({ labels, handleUpdate, handleDelete }) {
                     <tr key={label.id}>
                         <td>{label.name}</td>
                         <td>
-                            <Button
-                                variant="primary"
-                                onClick={() => handleUpdate(label.id)}
-                                className="me-2"
-                            >
+                            <Button variant="primary" onClick={() => handleUpdate(label.id)} className="me-2">
                                 <i className="bi bi-pencil-square me-1"></i>
                                 Modifier
                             </Button>
-                            <Button
-                                variant="danger"
-                                onClick={() => handleDelete(label.id)}
-                            >
+                            <Button variant="danger" onClick={() => handleDelete(label.id)}>
                                 <i className="bi bi-trash me-1"></i>
                                 Supprimer
                             </Button>
@@ -159,22 +142,13 @@ function LabelsTable({ labels, handleUpdate, handleDelete }) {
     );
 }
 
-function LabelsModal({
-    showModal,
-    handleCloseModal,
-    handleSubmit,
-    editingLabelId,
-    labelName,
-    setLabelName,
-}) {
+function LabelsModal({ showModal, handleCloseModal, handleSubmit, editingLabelId, labelName, setLabelName }) {
     // View
     return (
         <Modal show={showModal} onHide={handleCloseModal}>
             <Modal.Header closeButton>
                 <Modal.Title>
-                    {editingLabelId
-                        ? "Modifier l'étiquette"
-                        : "Créer une nouvelle étiquette"}
+                    {editingLabelId ? "Modifier l'étiquette" : "Créer une nouvelle étiquette"}
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -195,15 +169,8 @@ function LabelsModal({
                 <Button variant="secondary" onClick={handleCloseModal}>
                     Annuler
                 </Button>
-                <Button
-                    variant={editingLabelId ? "primary" : "success"}
-                    onClick={handleSubmit}
-                >
-                    <i
-                        className={`bi ${
-                            editingLabelId ? "bi-floppy" : "bi-plus-circle"
-                        } me-1`}
-                    ></i>
+                <Button variant={editingLabelId ? "primary" : "success"} onClick={handleSubmit}>
+                    <i className={`bi ${editingLabelId ? "bi-floppy" : "bi-plus-circle"} me-1`}></i>
                     {editingLabelId ? "Sauvegarder" : "Créer"}
                 </Button>
             </Modal.Footer>
