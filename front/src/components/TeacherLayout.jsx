@@ -1,42 +1,52 @@
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import { Bounce, ToastContainer } from "react-toastify";
+import { useError } from "../context/ErrorContext";
+import { Outlet } from "react-router";
+import { Alert } from "react-bootstrap";
 
-const TeacherLayout = ({ children }) => {
+const TeacherLayout = () => {
     return (
         <>
-            <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick={false}
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="colored"
-                transition={Bounce}
-            />
-            <Navbar expand="lg" className="bg-body-tertiary">
-                <Container>
-                    <Navbar.Brand href="/">ExploraLire</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
-                            <Nav.Link href="/">Accueil</Nav.Link>
-                            <Nav.Link href="/sites">Mes Sites</Nav.Link>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
+            <TeacherNavBar />
 
             <Container className="mt-3">
-                <main>{children}</main>
+                <ErrorBoundary />
+                <main>
+                    <Outlet />
+                </main>
             </Container>
         </>
     );
 };
+
+const TeacherNavBar = () => {
+    return (
+        <Navbar expand="lg" className="bg-body-tertiary">
+            <Container>
+                <Navbar.Brand href="/">ExploraLire</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="me-auto">
+                        <Nav.Link href="/">Accueil</Nav.Link>
+                        <Nav.Link href="/gestion/sites">Mes Sites</Nav.Link>
+                    </Nav>
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
+    );
+};
+
+function ErrorBoundary() {
+    const { error, clearError } = useError();
+
+    if (!error) return null;
+
+    return (
+        <Alert variant="danger" onClose={clearError} dismissible>
+            {error}
+        </Alert>
+    );
+}
 
 export default TeacherLayout;

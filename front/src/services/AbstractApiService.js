@@ -1,5 +1,5 @@
-const ERR_GENERIC =
-    "Erreur inconnue, merci de réessayer. Si le problème persiste, demande à ton professeur ; ce dernier pourra consulter la section d’aide du logiciel.";
+const ERR_GENERIC = import.meta.env.VITE_ERR_GENERIC;
+export const BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 export const handleResponse = async (res) => {
     const contentType = res.headers.get("Content-Type");

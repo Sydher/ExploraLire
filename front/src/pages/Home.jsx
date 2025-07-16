@@ -1,15 +1,9 @@
-import TeacherLayout from "../components/TeacherLayout"
-
 function Home() {
-  return (
-    <>
-      <TeacherLayout>
-        <p>
-          Accueil
-        </p>
-      </TeacherLayout>
-    </>
-  )
+    return (
+        <>
+            <p>Ma page d'accueil (TODO)</p>
+        </>
+    );
 }
 
-export default Home
+export default Home;
