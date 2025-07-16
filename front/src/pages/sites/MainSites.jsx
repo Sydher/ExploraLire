@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Labels from "./Labels";
 import Sites from "./Sites";
-import { Alert, Spinner } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
 import { getLabels } from "../../services/LabelsApiService";
 import { toast } from "react-toastify";
 import { useError } from "../../context/ErrorContext";
@@ -13,7 +13,7 @@ function MainSites() {
     const [loading, setLoading] = useState(false);
     const [labels, setLabels] = useState([]);
 
-    // Contextes
+    // Contexts
     const { showError, error } = useError();
 
     // Init
@@ -39,7 +39,7 @@ function MainSites() {
                 </Spinner>
             )}
 
-            {!error && !loading && (
+            {!loading && (
                 <>
                     <Sites labels={labels}></Sites>
                     <hr></hr>
