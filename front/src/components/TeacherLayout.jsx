@@ -30,6 +30,7 @@ const TeacherNavBar = () => {
                     <Nav className="me-auto">
                         <Nav.Link href="/">Accueil</Nav.Link>
                         <Nav.Link href="/gestion/sites">Mes Sites</Nav.Link>
+                        <Nav.Link href="/gestion/pages">Mes Pages</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

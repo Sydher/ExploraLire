@@ -1,87 +1,100 @@
-import { Puck } from "@measured/puck";
+import { createUsePuck, Puck } from "@measured/puck";
 import "@measured/puck/puck.css";
 import { DropZone } from "@measured/puck";
+import { Button } from "react-bootstrap";
 
-// Create Puck component config
 const config = {
+    // Définitions des catégories de composants
     categories: {
         typography: {
-          components: ["HeadingBlock", "Card", "Image"],
-          title: "Principale",
-          defaultExpanded: true, // Collapse this category by default
+            components: ["HeadingBlock", "Card", "Image"],
+            title: "Principale",
+            defaultExpanded: true, // Collapse this category by default
         },
         foundational: {
-          components: ["Colonnes"],
-          defaultExpanded: false,
+            components: ["Colonnes"],
+            defaultExpanded: false,
         },
-      },
-  components: {
-    HeadingBlock: {
-      fields: {
-        children: {
-          type: "text",
-        },
-        title: {
-          type: "text",
-        },
-      },
-      render: ({ children, title }) => {
-        return <h1 aria-details={title}>{children}</h1>;
-      },
     },
-    Image: {
-        fields: {
-          txt: {
-            type: "text",
-          },
-          url: {
-            type: "text",
-          },
-        },
-        render: ({ url, txt }) => {
-          return <img alt={txt} src={url} />;
-        },
-      },
-    Colonnes: {
-        render: () => {
-          return (
-            <div
-              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}
-            >
-              <DropZone zone="left-column" />
-              <DropZone zone="right-column" />
-            </div>
-          );
-        },
-      },
-      Card: {
-        fields: {
-            mytext: {
-              type: "text",
+    // Définitions des composants
+    components: {
+        HeadingBlock: {
+            fields: {
+                children: {
+                    type: "text",
+                },
+                title: {
+                    type: "text",
+                },
             },
-            title: {
-              type: "text",
+            render: ({ children, title }) => {
+                return <h1 aria-details={title}>{children}</h1>;
             },
-          },
-        render: ({ mytext, title }) => <div aria-name={title}>{mytext}</div>,
-      },
-  },
+        },
+        Image: {
+            fields: {
+                txt: {
+                    type: "text",
+                },
+                url: {
+                    type: "text",
+                },
+            },
+            render: ({ url, txt }) => {
+                return <img alt={txt} src={url} />;
+            },
+        },
+        Colonnes: {
+            render: () => {
+                return (
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                        <DropZone zone="left-column" />
+                        <DropZone zone="right-column" />
+                    </div>
+                );
+            },
+        },
+        Card: {
+            fields: {
+                mytext: {
+                    type: "text",
+                },
+                title: {
+                    type: "text",
+                },
+            },
+            render: ({ mytext, title }) => <div aria-name={title}>{mytext}</div>,
+        },
+    },
 };
 
-// Describe the initial data
-const initialData = {};
+const usePuck = createUsePuck();
 
-// Save the data to your database
-/*const save = (data, setConfig, setData) => {
-    console.log(data)
-    setConfig(config)
-    setData(data)
-};*/
+export function Editor({ initialData, onSave, isEditing }) {
+    return (
+        <Puck
+            config={config}
+            data={initialData}
+            onPublish={(d) => onSave(d)}
+            overrides={{
+                headerActions: () => {
+                    const appState = usePuck((s) => s.appState);
 
-// Render Puck editor
-export function Editor({setConfig, setData, onSave}) {
-  return <Puck
-    config={config} data={initialData} onPublish={(d) => onSave(d)}
-  />
+                    return (
+                        <>
+                            <Button
+                                variant={isEditing ? "primary" : "success"}
+                                onClick={() => {
+                                    onSave(appState.data);
+                                }}
+                            >
+                                <i className={`bi ${isEditing ? "bi-floppy" : "bi-plus-circle"} me-1`}></i>
+                                {isEditing ? "Sauvegarder" : "Créer"}
+                            </Button>
+                        </>
+                    );
+                },
+            }}
+        />
+    );
 }
-//config={config} data={initialData} onPublish={(d) => save(d, setConfig, setData)}

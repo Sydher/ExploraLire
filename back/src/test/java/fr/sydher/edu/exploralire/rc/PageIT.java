@@ -39,7 +39,7 @@ public class PageIT extends ITHelper {
     void getAll(int size) {
         // then
         JsonPathMessageValidationContext.Builder validator = jsonPath()
-                .expression("$.size()", size);
+                .expression("$.items.size()", size);
 
         // when
         get(pageAPIClient, "/", validator);

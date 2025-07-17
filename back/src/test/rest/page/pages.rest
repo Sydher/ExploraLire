@@ -1,5 +1,5 @@
 ### Get All
-GET http://localhost:8080/api/pages
+GET http://localhost:8080/api/pages?page=1
 
 ### Get One
 GET http://localhost:8080/api/pages/2

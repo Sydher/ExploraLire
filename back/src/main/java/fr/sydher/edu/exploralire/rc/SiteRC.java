@@ -1,7 +1,9 @@
 package fr.sydher.edu.exploralire.rc;
 
 import fr.sydher.edu.exploralire.ds.SiteDS;
+import fr.sydher.edu.exploralire.dto.site.AttachPageToSiteDTO;
 import fr.sydher.edu.exploralire.dto.site.CreateSiteDTO;
+import fr.sydher.edu.exploralire.dto.site.DetachPageToSiteDTO;
 import fr.sydher.edu.exploralire.dto.site.UpdateSiteDTO;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -49,6 +51,22 @@ public class SiteRC {
     public Response delete(Long id) {
         siteDS.delete(id);
         return Response.ok().build();
+    }
+
+    @POST
+    @Path("/attach/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response attach(Long id, @Valid AttachPageToSiteDTO attachPageToSiteDTO) {
+        return Response.ok(siteDS.attachPage(id, attachPageToSiteDTO)).build();
+    }
+
+    @POST
+    @Path("/detach/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response detach(Long id, @Valid DetachPageToSiteDTO detachPageToSiteDTO) {
+        return Response.ok(siteDS.detachPage(id, detachPageToSiteDTO)).build();
     }
 
 }

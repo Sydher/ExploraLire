@@ -2,10 +2,12 @@ package fr.sydher.edu.exploralire.ds;
 
 import fr.sydher.edu.exploralire.dto.page.CreatePageDTO;
 import fr.sydher.edu.exploralire.dto.page.PageDTO;
+import fr.sydher.edu.exploralire.dto.page.PageResultDTO;
 import fr.sydher.edu.exploralire.dto.page.UpdatePageDTO;
 import fr.sydher.edu.exploralire.entity.PageEntity;
 import fr.sydher.edu.exploralire.exception.PageNotFoundException;
 import fr.sydher.edu.exploralire.repository.PageRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -53,15 +55,19 @@ class PageDSTest {
     @Test
     void getAll() {
         // Given
-        when(pageRepository.streamAll()).thenReturn(Arrays.stream(new PageEntity[]{p1, p2, p3}));
+        PanacheQuery<PageEntity> mockQuery = mock(PanacheQuery.class);
+
+        when(pageRepository.findAll()).thenReturn(mockQuery);
+        when(mockQuery.page(any())).thenReturn(mockQuery);
+        when(mockQuery.list()).thenReturn(List.of(p1, p2, p3));
 
         // When
-        List<PageDTO> result = pageDS.getAll();
+        PageResultDTO result = pageDS.getAll(0);
 
         // Then
-        assertEquals(3, result.size());
-        assertEquals("p1", result.getFirst().name());
-        verify(pageRepository).streamAll();
+        assertEquals(3, result.items().size());
+        assertEquals("p1", result.items().getFirst().name());
+        verify(pageRepository).findAll();
     }
 
     @Test

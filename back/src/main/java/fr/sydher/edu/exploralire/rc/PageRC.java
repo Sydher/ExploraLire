@@ -17,8 +17,8 @@ public class PageRC {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
-        return Response.ok(pageDS.getAll()).build();
+    public Response getAll(@QueryParam("page") @DefaultValue("0") int page) {
+        return Response.ok(pageDS.getAll(page)).build();
     }
 
     @GET

@@ -2,12 +2,16 @@ package fr.sydher.edu.exploralire.ds;
 
 import fr.sydher.edu.exploralire.dto.page.CreatePageDTO;
 import fr.sydher.edu.exploralire.dto.page.PageDTO;
+import fr.sydher.edu.exploralire.dto.page.PageResultDTO;
 import fr.sydher.edu.exploralire.dto.page.UpdatePageDTO;
 import fr.sydher.edu.exploralire.entity.PageEntity;
 import fr.sydher.edu.exploralire.exception.PageNotFoundException;
 import fr.sydher.edu.exploralire.repository.PageRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -19,8 +23,14 @@ public class PageDS {
     @Inject
     PageRepository pageRepository;
 
-    public List<PageDTO> getAll() {
-        return pageRepository.streamAll().map(PageDTO::fromEntity).collect(Collectors.toList());
+    @ConfigProperty(name = "exploralire.page.size")
+    int pageSize;
+
+    public PageResultDTO getAll(int page) {
+        PanacheQuery<PageEntity> query = pageRepository.findAll().page(Page.of(page, pageSize));
+        List<PageDTO> pages = query.list().stream().map(PageDTO::fromEntity).collect(Collectors.toList());
+        long total = query.count();
+        return new PageResultDTO(pages, total);
     }
 
     public PageDTO get(Long id) throws PageNotFoundException {

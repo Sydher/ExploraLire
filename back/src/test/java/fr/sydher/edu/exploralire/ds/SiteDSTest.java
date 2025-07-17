@@ -113,7 +113,7 @@ class SiteDSTest {
     @Test
     void getAll() {
         // Given
-        when(siteRepository.streamAll()).thenReturn(Arrays.stream(new SiteEntity[]{s1, s2, s3}));
+        when(siteRepository.listAll()).thenReturn(List.of(s1, s2, s3));
 
         // When
         List<SiteDTO> result = siteDS.getAll();
@@ -121,7 +121,7 @@ class SiteDSTest {
         // Then
         assertEquals(3, result.size());
         assertEquals("s1", result.getFirst().name());
-        verify(siteRepository).streamAll();
+        verify(siteRepository).listAll();
     }
 
     @Test
@@ -332,7 +332,7 @@ class SiteDSTest {
     @Test
     void attach_ok_to_empty() {
         // Given
-        AttachPageToSiteDTO dto = new AttachPageToSiteDTO(1L, List.of(1L, 2L));
+        AttachPageToSiteDTO dto = new AttachPageToSiteDTO(List.of(1L, 2L));
         when(siteRepository.findById(1L)).thenReturn(s1);
         doNothing().when(siteRepository).persist(any(SiteEntity.class));
         ArgumentCaptor<SiteEntity> siteEntityAC = ArgumentCaptor.forClass(SiteEntity.class);
@@ -340,7 +340,7 @@ class SiteDSTest {
         when(pageDS.getEntity(2L)).thenReturn(p2);
 
         // When
-        SiteDTO result = siteDS.attachPage(dto);
+        SiteDTO result = siteDS.attachPage(1L, dto);
 
         // Then
         assertEquals("s1", result.name());
@@ -355,14 +355,14 @@ class SiteDSTest {
     @Test
     void attach_ok_to_not_empty() {
         // Given
-        AttachPageToSiteDTO dto = new AttachPageToSiteDTO(5L, List.of(2L));
+        AttachPageToSiteDTO dto = new AttachPageToSiteDTO(List.of(2L));
         when(siteRepository.findById(5L)).thenReturn(s5);
         doNothing().when(siteRepository).persist(any(SiteEntity.class));
         ArgumentCaptor<SiteEntity> siteEntityAC = ArgumentCaptor.forClass(SiteEntity.class);
         when(pageDS.getEntity(2L)).thenReturn(p2);
 
         // When
-        SiteDTO result = siteDS.attachPage(dto);
+        SiteDTO result = siteDS.attachPage(5L, dto);
 
         // Then
         assertEquals("s5 with labels and pages", result.name());
@@ -377,12 +377,12 @@ class SiteDSTest {
     @Test
     void attach_ko() {
         // Given
-        AttachPageToSiteDTO dto = new AttachPageToSiteDTO(1L, List.of(1L, 2L));
+        AttachPageToSiteDTO dto = new AttachPageToSiteDTO(List.of(1L, 2L));
         when(siteRepository.findById(1L)).thenReturn(null);
         doNothing().when(siteRepository).persist(any(SiteEntity.class));
 
         // When-Then
-        assertThrows(SiteNotFoundException.class, () -> siteDS.attachPage(dto));
+        assertThrows(SiteNotFoundException.class, () -> siteDS.attachPage(1L, dto));
         verify(siteRepository, times(0)).persist(any(SiteEntity.class));
     }
 
@@ -390,11 +390,11 @@ class SiteDSTest {
     @Test
     void detach_ok_to_empty() {
         // Given
-        DetachPageToSiteDTO dto = new DetachPageToSiteDTO(1L, Set.of(1L, 2L));
+        DetachPageToSiteDTO dto = new DetachPageToSiteDTO(Set.of(1L, 2L));
         when(siteRepository.findById(1L)).thenReturn(s1);
 
         // When
-        SiteDTO result = siteDS.detachPage(dto);
+        SiteDTO result = siteDS.detachPage(1L, dto);
 
         // Then
         assertEquals("s1", result.name());
@@ -404,13 +404,13 @@ class SiteDSTest {
     @Test
     void detach_ok_to_not_empty() {
         // Given
-        DetachPageToSiteDTO dto = new DetachPageToSiteDTO(5L, Set.of(1L));
+        DetachPageToSiteDTO dto = new DetachPageToSiteDTO(Set.of(1L));
         when(siteRepository.findById(5L)).thenReturn(s5);
         doNothing().when(siteRepository).persist(any(SiteEntity.class));
         ArgumentCaptor<SiteEntity> siteEntityAC = ArgumentCaptor.forClass(SiteEntity.class);
 
         // When
-        SiteDTO result = siteDS.detachPage(dto);
+        SiteDTO result = siteDS.detachPage(5L, dto);
 
         // Then
         assertEquals("s5 with labels and pages", result.name());
@@ -425,12 +425,12 @@ class SiteDSTest {
     @Test
     void detach_ko() {
         // Given
-        DetachPageToSiteDTO dto = new DetachPageToSiteDTO(1L, Set.of(1L, 2L));
+        DetachPageToSiteDTO dto = new DetachPageToSiteDTO(Set.of(1L, 2L));
         when(siteRepository.findById(1L)).thenReturn(null);
         doNothing().when(siteRepository).persist(any(SiteEntity.class));
 
         // When-Then
-        assertThrows(SiteNotFoundException.class, () -> siteDS.detachPage(dto));
+        assertThrows(SiteNotFoundException.class, () -> siteDS.detachPage(1L, dto));
         verify(siteRepository, times(0)).persist(any(SiteEntity.class));
     }
 

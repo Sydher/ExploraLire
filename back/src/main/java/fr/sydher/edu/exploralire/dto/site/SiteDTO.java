@@ -10,19 +10,25 @@ import java.util.List;
 public record SiteDTO(Long id, String name, List<LabelDTO> labels, List<PageDTO> pages) {
 
     public static SiteDTO fromEntity(SiteEntity entity) {
-        List<LabelDTO> labels = entity.labels != null ?
-                entity.labels.stream()
-                        .map(LabelDTO::fromEntity)
-                        .toList()
-                : new ArrayList<>();
-
         List<PageDTO> pages = entity.pages != null ?
                 entity.pages.stream()
                         .map(PageDTO::fromEntity)
                         .toList()
                 : new ArrayList<>();
 
-        return new SiteDTO(entity.id, entity.name, labels, pages);
+        return new SiteDTO(entity.id, entity.name, getLabelDTOS(entity), pages);
+    }
+
+    public static SiteDTO fromEntityWithoutPages(SiteEntity entity) {
+        return new SiteDTO(entity.id, entity.name, getLabelDTOS(entity), List.of());
+    }
+
+    private static List<LabelDTO> getLabelDTOS(SiteEntity entity) {
+        return entity.labels != null ?
+                entity.labels.stream()
+                        .map(LabelDTO::fromEntity)
+                        .toList()
+                : new ArrayList<>();
     }
 
 }

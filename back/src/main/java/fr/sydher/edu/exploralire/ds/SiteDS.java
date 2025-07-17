@@ -32,7 +32,7 @@ public class SiteDS {
     SiteRepository siteRepository;
 
     public List<SiteDTO> getAll() {
-        return siteRepository.listAll().stream().map(SiteDTO::fromEntity).collect(Collectors.toList());
+        return siteRepository.listAll().stream().map(SiteDTO::fromEntityWithoutPages).collect(Collectors.toList());
     }
 
     public SiteDTO get(Long id) throws SiteNotFoundException {
@@ -75,11 +75,11 @@ public class SiteDS {
     }
 
     @Transactional
-    public SiteDTO attachPage(AttachPageToSiteDTO dto) throws SiteNotFoundException {
-        SiteEntity siteEntity = siteRepository.findById(dto.siteId());
+    public SiteDTO attachPage(Long siteId, AttachPageToSiteDTO dto) throws SiteNotFoundException {
+        SiteEntity siteEntity = siteRepository.findById(siteId);
 
         if (siteEntity == null) {
-            throw new SiteNotFoundException(dto.siteId());
+            throw new SiteNotFoundException(siteId);
         }
 
         if (siteEntity.pages == null) {
@@ -95,11 +95,11 @@ public class SiteDS {
     }
 
     @Transactional
-    public SiteDTO detachPage(DetachPageToSiteDTO dto) throws SiteNotFoundException {
-        SiteEntity siteEntity = siteRepository.findById(dto.siteId());
+    public SiteDTO detachPage(Long siteId, DetachPageToSiteDTO dto) throws SiteNotFoundException {
+        SiteEntity siteEntity = siteRepository.findById(siteId);
 
         if (siteEntity == null) {
-            throw new SiteNotFoundException(dto.siteId());
+            throw new SiteNotFoundException(siteId);
         }
 
         if (siteEntity.pages == null) {
