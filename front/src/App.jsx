@@ -5,6 +5,7 @@ import TeacherLayout from "./components/TeacherLayout.jsx";
 import Home from "./pages/Home.jsx";
 import MainSites from "./pages/sites/MainSites.jsx";
 import MainPages from "./pages/pages/MainPages.jsx";
+import Exemple from "./pages/pages/Exemple.jsx";
 
 function App() {
     return (
@@ -29,6 +30,7 @@ function App() {
                     <Route path="gestion">
                         <Route path="sites" element={<MainSites />} />
                         <Route path="pages" element={<MainPages />} />
+                        <Route path="exemple" element={<Exemple />} />
                     </Route>
                 </Route>
             </Routes>

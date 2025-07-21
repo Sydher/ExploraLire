@@ -4,6 +4,8 @@ const API_URL = `${BASE_URL}/pages`;
 
 export const getPages = (page = 0) => fetch(`${API_URL}?page=${page}`).then(handleResponse);
 
+export const getPage = (id) => fetch(`${API_URL}/${id}`).then(handleResponse);
+
 export const deletePage = (id) => fetch(`${API_URL}/${id}`, { method: "DELETE" });
 
 export const createPage = (body) =>

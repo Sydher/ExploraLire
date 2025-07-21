@@ -31,6 +31,7 @@ const TeacherNavBar = () => {
                         <Nav.Link href="/">Accueil</Nav.Link>
                         <Nav.Link href="/gestion/sites">Mes Sites</Nav.Link>
                         <Nav.Link href="/gestion/pages">Mes Pages</Nav.Link>
+                        <Nav.Link href="/gestion/exemple">Exemple</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

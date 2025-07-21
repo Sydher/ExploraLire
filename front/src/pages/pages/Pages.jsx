@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Form, Modal, Table } from "react-bootstrap";
+import { Button, Modal, Table } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { useError } from "../../context/ErrorContext";
 import { createPage, deletePage, updatePage } from "../../services/PagesApiService";
