@@ -36,3 +36,10 @@ Ensuite l’outil fournira un système de questions intégré pour évaluer l’
 * Le package parent sera `fr.sydher.edu.exploralire`
 * Réalise des TU au format "given when then"
 * Ligne vide avant et après le dernier "}" de la classe
+
+## Règles de développement React
+
+* Visuel avec Boostrap 5
+* Respecte RGAA
+* Bouton d'action à droite (et donc bouton annuler à gauche si présent)
+* Utilise au mieux les fichiers .env

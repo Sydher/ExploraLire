@@ -1,5 +1,6 @@
 package fr.sydher.edu.exploralire.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 
@@ -21,6 +22,7 @@ public class Site extends PanacheEntity {
     )
     public List<Label> labels = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "site", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Page> pages = new ArrayList<>();
 

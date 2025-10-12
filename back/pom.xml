@@ -44,18 +44,8 @@
             <artifactId>quarkus-smallrye-openapi</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.47.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.jdbc</groupId>
-            <artifactId>quarkus-jdbc-sqlite</artifactId>
-            <version>3.0.11</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-community-dialects</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-h2</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>

@@ -27,3 +27,5 @@
 !front/package-lock.json
 !front/package.json
 !front/vite.config.js
+!front/.env
+!front/.env.development
