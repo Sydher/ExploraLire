@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-
-const API_URL = `${import.meta.env.VITE_API_URL}/api/sites`;
-const LABELS_API_URL = `${import.meta.env.VITE_API_URL}/api/labels`;
+import * as siteService from '../services/siteService';
+import * as labelService from '../services/labelService';
 
 const ERR_LOAD = import.meta.env.VITE_ERR_LOAD;
 const ERR_SAVE = import.meta.env.VITE_ERR_SAVE;
@@ -23,12 +22,7 @@ export default function SiteManagement() {
   const fetchSites = async () => {
     try {
       setError(null);
-      const response = await fetch(API_URL);
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Erreur lors du chargement des sites');
-      }
-      const data = await response.json();
+      const data = await siteService.getAllSites();
       setSites(data);
     } catch (error) {
       setError(ERR_LOAD);
@@ -38,14 +32,9 @@ export default function SiteManagement() {
 
   const fetchLabels = async () => {
     try {
-      const response = await fetch(LABELS_API_URL);
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Erreur lors du chargement des labels');
-      }
-      const data = await response.json();
+      const data = await labelService.getAllLabels();
       setAllLabels(data);
-    } catch (ERR_LOAD) {
+    } catch (error) {
       console.error('Erreur lors du chargement des labels :', error);
     }
   };
@@ -54,15 +43,7 @@ export default function SiteManagement() {
     e.preventDefault();
     try {
       setError(null);
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Erreur lors de la création');
-      }
+      await siteService.createSite(formData);
       setFormData({ name: '', labels: [] });
       setIsCreating(false);
       fetchSites();
@@ -76,15 +57,7 @@ export default function SiteManagement() {
     e.preventDefault();
     try {
       setError(null);
-      const response = await fetch(`${API_URL}/${editingSite.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Erreur lors de la modification');
-      }
+      await siteService.updateSite(editingSite.id, formData);
       setFormData({ name: '', labels: [] });
       setEditingSite(null);
       fetchSites();
@@ -98,13 +71,7 @@ export default function SiteManagement() {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce site ?')) {
       try {
         setError(null);
-        const response = await fetch(`${API_URL}/${id}`, {
-          method: 'DELETE',
-        });
-        if (!response.ok) {
-          const errorData = await response.text();
-          throw new Error(errorData || 'Erreur lors de la suppression');
-        }
+        await siteService.deleteSite(id);
         fetchSites();
       } catch (error) {
         setError(ERR_DELETE);

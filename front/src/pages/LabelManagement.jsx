@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-
-const API_URL = `${import.meta.env.VITE_API_URL}/api/labels`;
+import * as labelService from '../services/labelService';
 
 const ERR_LOAD = import.meta.env.VITE_ERR_LOAD;
 const ERR_SAVE = import.meta.env.VITE_ERR_SAVE;
@@ -20,12 +19,7 @@ export default function LabelManagement() {
   const fetchLabels = async () => {
     try {
       setError(null);
-      const response = await fetch(API_URL);
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Erreur lors du chargement des labels');
-      }
-      const data = await response.json();
+      const data = await labelService.getAllLabels();
       setLabels(data);
     } catch (error) {
       setError(ERR_LOAD);
@@ -37,15 +31,7 @@ export default function LabelManagement() {
     e.preventDefault();
     try {
       setError(null);
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Erreur lors de la création');
-      }
+      await labelService.createLabel(formData);
       setFormData({ name: '' });
       setIsCreating(false);
       fetchLabels();
@@ -59,15 +45,7 @@ export default function LabelManagement() {
     e.preventDefault();
     try {
       setError(null);
-      const response = await fetch(`${API_URL}/${editingLabel.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Erreur lors de la modification');
-      }
+      await labelService.updateLabel(editingLabel.id, formData);
       setFormData({ name: '' });
       setEditingLabel(null);
       fetchLabels();
@@ -81,13 +59,7 @@ export default function LabelManagement() {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce label ?')) {
       try {
         setError(null);
-        const response = await fetch(`${API_URL}/${id}`, {
-          method: 'DELETE',
-        });
-        if (!response.ok) {
-          const errorData = await response.text();
-          throw new Error(errorData || 'Erreur lors de la suppression');
-        }
+        await labelService.deleteLabel(id);
         fetchLabels();
       } catch (error) {
         setError(ERR_DELETE);

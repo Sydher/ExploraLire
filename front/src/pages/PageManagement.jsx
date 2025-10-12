@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-
-const API_URL = `${import.meta.env.VITE_API_URL}/api/pages`;
-const SITES_API_URL = `${import.meta.env.VITE_API_URL}/api/sites`;
+import * as pageService from '../services/pageService';
+import * as siteService from '../services/siteService';
 
 const ERR_LOAD = import.meta.env.VITE_ERR_LOAD;
 const ERR_SAVE = import.meta.env.VITE_ERR_SAVE;
@@ -23,12 +22,7 @@ export default function PageManagement() {
   const fetchPages = async () => {
     try {
       setError(null);
-      const response = await fetch(API_URL);
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Erreur lors du chargement des pages');
-      }
-      const data = await response.json();
+      const data = await pageService.getAllPages();
       setPages(data);
     } catch (error) {
       setError(ERR_LOAD);
@@ -38,12 +32,7 @@ export default function PageManagement() {
 
   const fetchSites = async () => {
     try {
-      const response = await fetch(SITES_API_URL);
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Erreur lors du chargement des sites');
-      }
-      const data = await response.json();
+      const data = await siteService.getAllSites();
       setAllSites(data);
     } catch (error) {
       console.error('Erreur lors du chargement des sites :', error);
@@ -54,15 +43,7 @@ export default function PageManagement() {
     e.preventDefault();
     try {
       setError(null);
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Erreur lors de la création');
-      }
+      await pageService.createPage(formData);
       setFormData({ name: '', content: '', site: null });
       setIsCreating(false);
       fetchPages();
@@ -76,15 +57,7 @@ export default function PageManagement() {
     e.preventDefault();
     try {
       setError(null);
-      const response = await fetch(`${API_URL}/${editingPage.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(errorData || 'Erreur lors de la modification');
-      }
+      await pageService.updatePage(editingPage.id, formData);
       setFormData({ name: '', content: '', site: null });
       setEditingPage(null);
       fetchPages();
@@ -98,13 +71,7 @@ export default function PageManagement() {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette page ?')) {
       try {
         setError(null);
-        const response = await fetch(`${API_URL}/${id}`, {
-          method: 'DELETE',
-        });
-        if (!response.ok) {
-          const errorData = await response.text();
-          throw new Error(errorData || 'Erreur lors de la suppression');
-        }
+        await pageService.deletePage(id);
         fetchPages();
       } catch (error) {
         setError(ERR_DELETE);
