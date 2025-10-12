@@ -1,3 +1,5 @@
+import RichTextEditor from '../RichTextEditor';
+
 export default function TextBlock({ block, onChange, onDelete }) {
   return (
     <div className="mb-3">
@@ -16,13 +18,9 @@ export default function TextBlock({ block, onChange, onDelete }) {
         </button>
       </div>
 
-      <textarea
-        className="form-control"
-        rows="4"
-        value={block.text || ''}
-        onChange={(e) => onChange({ ...block, text: e.target.value })}
-        placeholder="Entrez le contenu du paragraphe"
-        required
+      <RichTextEditor
+        content={block.text || ''}
+        onChange={(html) => onChange({ ...block, text: html })}
       />
     </div>
   );
