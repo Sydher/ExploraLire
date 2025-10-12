@@ -14,7 +14,7 @@ public class Site extends PanacheEntity {
     @Column(nullable = false)
     public String name;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "site_labels",
             joinColumns = @JoinColumn(name = "site_id"),
