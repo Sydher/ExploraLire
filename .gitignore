@@ -3,6 +3,7 @@
 
 # Exceptions - fichiers à la racine
 !.gitignore
+!LICENSE
 !*.md
 
 # Exceptions - dossier back
