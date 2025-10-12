@@ -8,7 +8,6 @@
 # Exceptions - dossier back
 !back/
 !back/pom.xml
-!back/*.md
 !back/src/
 !back/src/**
 !back/mvnw
@@ -16,3 +15,15 @@
 !back/.mvn/
 !back/.mvn/wrapper/
 !back/.mvn/wrapper/**
+
+# Exceptions - dossier front
+!front/
+!front/public/
+!front/public/**
+!front/src/
+!front/src/**
+!front/eslint.config.js
+!front/index.html
+!front/package-lock.json
+!front/package.json
+!front/vite.config.js
