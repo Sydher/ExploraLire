@@ -16,4 +16,5 @@ public class Page extends PanacheEntity {
     @ManyToOne
     @JoinColumn(name = "site_id", nullable = false)
     public Site site;
+
 }

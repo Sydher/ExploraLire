@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as pageService from '../services/pageService';
 import * as siteService from '../services/siteService';
+import BlockEditor from '../components/BlockEditor';
 
 const ERR_LOAD = import.meta.env.VITE_ERR_LOAD;
 const ERR_SAVE = import.meta.env.VITE_ERR_SAVE;
@@ -10,7 +11,7 @@ export default function PageManagement() {
   const [pages, setPages] = useState([]);
   const [allSites, setAllSites] = useState([]);
   const [editingPage, setEditingPage] = useState(null);
-  const [formData, setFormData] = useState({ name: '', content: '', site: null });
+  const [formData, setFormData] = useState({ name: '', content: [], site: null });
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState(null);
 
@@ -43,8 +44,12 @@ export default function PageManagement() {
     e.preventDefault();
     try {
       setError(null);
-      await pageService.createPage(formData);
-      setFormData({ name: '', content: '', site: null });
+      const dataToSave = {
+        ...formData,
+        content: JSON.stringify(formData.content),
+      };
+      await pageService.createPage(dataToSave);
+      setFormData({ name: '', content: [], site: null });
       setIsCreating(false);
       fetchPages();
     } catch (error) {
@@ -57,8 +62,12 @@ export default function PageManagement() {
     e.preventDefault();
     try {
       setError(null);
-      await pageService.updatePage(editingPage.id, formData);
-      setFormData({ name: '', content: '', site: null });
+      const dataToSave = {
+        ...formData,
+        content: JSON.stringify(formData.content),
+      };
+      await pageService.updatePage(editingPage.id, dataToSave);
+      setFormData({ name: '', content: [], site: null });
       setEditingPage(null);
       fetchPages();
     } catch (error) {
@@ -82,9 +91,16 @@ export default function PageManagement() {
 
   const startEdit = (page) => {
     setEditingPage(page);
+    let parsedContent = [];
+    try {
+      parsedContent = page.content ? JSON.parse(page.content) : [];
+    } catch (error) {
+      console.error('Erreur lors du parsing du contenu:', error);
+      parsedContent = [];
+    }
     setFormData({
       name: page.name,
-      content: page.content,
+      content: parsedContent,
       site: page.site,
     });
     setIsCreating(false);
@@ -92,14 +108,14 @@ export default function PageManagement() {
 
   const cancelEdit = () => {
     setEditingPage(null);
-    setFormData({ name: '', content: '', site: null });
+    setFormData({ name: '', content: [], site: null });
     setIsCreating(false);
   };
 
   const startCreate = () => {
     setIsCreating(true);
     setEditingPage(null);
-    setFormData({ name: '', content: '', site: null });
+    setFormData({ name: '', content: [], site: null });
   };
 
   return (
@@ -158,18 +174,12 @@ export default function PageManagement() {
                   </div>
 
                   <div className="mb-3">
-                    <label htmlFor="pageContent" className="form-label">
-                      Contenu
+                    <label className="form-label">
+                      Contenu de la page
                     </label>
-                    <textarea
-                      className="form-control"
-                      id="pageContent"
-                      rows="5"
-                      value={formData.content}
-                      onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                      placeholder="Entrez le contenu de la page"
-                      required
-                      aria-required="true"
+                    <BlockEditor
+                      blocks={formData.content}
+                      onChange={(blocks) => setFormData({ ...formData, content: blocks })}
                     />
                   </div>
 
@@ -228,7 +238,6 @@ export default function PageManagement() {
                   <tr>
                     <th scope="col">ID</th>
                     <th scope="col">Nom</th>
-                    <th scope="col">Contenu</th>
                     <th scope="col">Site</th>
                     <th scope="col" className="text-end">Actions</th>
                   </tr>
@@ -238,11 +247,6 @@ export default function PageManagement() {
                     <tr key={page.id}>
                       <td>{page.id}</td>
                       <td>{page.name}</td>
-                      <td>
-                        <span className="text-truncate d-inline-block" style={{ maxWidth: '200px' }}>
-                          {page.content}
-                        </span>
-                      </td>
                       <td>{page.site?.name || '-'}</td>
                       <td className="text-end">
                         <button
