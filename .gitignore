@@ -1,0 +1,18 @@
+# Ignorer tout par défaut
+*
+
+# Exceptions - fichiers à la racine
+!.gitignore
+!*.md
+
+# Exceptions - dossier back
+!back/
+!back/pom.xml
+!back/*.md
+!back/src/
+!back/src/**
+!back/mvnw
+!back/mvnw.cmd
+!back/.mvn/
+!back/.mvn/wrapper/
+!back/.mvn/wrapper/**
