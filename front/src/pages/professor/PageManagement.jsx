@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import * as pageService from '../services/pageService';
-import * as siteService from '../services/siteService';
-import BlockEditor from '../components/BlockEditor';
+import * as pageService from '../../services/pageService';
+import * as siteService from '../../services/siteService';
+import BlockEditor from '../../components/BlockEditor';
 
 const ERR_LOAD = import.meta.env.VITE_ERR_LOAD;
 const ERR_SAVE = import.meta.env.VITE_ERR_SAVE;

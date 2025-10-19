@@ -1,6 +1,6 @@
-import { createCrudService } from './crudService';
+import { createCrudService } from "./crudService";
 
-const siteCrud = createCrudService('/api/sites');
+const siteCrud = createCrudService("/api/sites");
 
 export const getAllSites = siteCrud.getAll;
 export const createSite = siteCrud.create;

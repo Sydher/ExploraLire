@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import * as labelService from '../services/labelService';
+import * as labelService from '../../services/labelService';
 
 const ERR_LOAD = import.meta.env.VITE_ERR_LOAD;
 const ERR_SAVE = import.meta.env.VITE_ERR_SAVE;
