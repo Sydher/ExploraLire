@@ -25,7 +25,7 @@ export default function SiteManagement() {
         startEdit,
         cancelEdit,
         startCreate,
-    } = useEntityManager(service, "sites", { name: "", labels: [] });
+    } = useEntityManager(service, "sites", { name: "", labels: [], secretCode: "" });
 
     useEffect(() => {
         fetchLabels();
@@ -58,10 +58,27 @@ export default function SiteManagement() {
     const prepareFormData = (site) => ({
         name: site.name,
         labels: site.labels || [],
+        secretCode: site.secretCode || "",
     });
 
     const columns = [
         { key: "name", header: "Nom" },
+        {
+            key: "secretCode",
+            header: "Protection",
+            render: (site) =>
+                site.secretCode && site.secretCode.trim() !== "" ? (
+                    <span className="badge bg-warning text-dark">
+                        <i className="bi bi-lock-fill me-1"></i>
+                        Protégé
+                    </span>
+                ) : (
+                    <span className="badge bg-success">
+                        <i className="bi bi-unlock-fill me-1"></i>
+                        Public
+                    </span>
+                ),
+        },
         {
             key: "labels",
             header: "Labels",
@@ -120,6 +137,23 @@ export default function SiteManagement() {
                                     required
                                     aria-required="true"
                                 />
+                            </div>
+
+                            <div className="mb-3">
+                                <label htmlFor="siteSecretCode" className="form-label">
+                                    Code secret (facultatif)
+                                </label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    id="siteSecretCode"
+                                    value={formData.secretCode}
+                                    onChange={(e) => setFormData({ ...formData, secretCode: e.target.value })}
+                                    placeholder="Laissez vide pour un site public"
+                                />
+                                <div className="form-text">
+                                    Si vous définissez un code, les élèves devront le saisir pour accéder au site
+                                </div>
                             </div>
 
                             <fieldset className="mb-3">

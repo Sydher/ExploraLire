@@ -58,4 +58,44 @@ public class SiteRC {
         return Response.noContent().build();
     }
 
+    @GET
+    @Path("/{id}/requires-code")
+    public Response requiresCode(@PathParam("id") Long id) {
+        boolean requiresCode = siteDS.requiresAccessCode(id);
+        return Response.ok(new RequiresCodeResponse(requiresCode)).build();
+    }
+
+    @POST
+    @Path("/{id}/verify-access")
+    public Response verifyAccess(@PathParam("id") Long id, AccessCodeRequest request) {
+        boolean hasAccess = siteDS.verifyAccessCode(id, request.code);
+        return Response.ok(new AccessResponse(hasAccess)).build();
+    }
+
+    public static class AccessCodeRequest {
+        public String code;
+    }
+
+    public static class RequiresCodeResponse {
+        public boolean requiresCode;
+
+        public RequiresCodeResponse() {
+        }
+
+        public RequiresCodeResponse(boolean requiresCode) {
+            this.requiresCode = requiresCode;
+        }
+    }
+
+    public static class AccessResponse {
+        public boolean hasAccess;
+
+        public AccessResponse() {
+        }
+
+        public AccessResponse(boolean hasAccess) {
+            this.hasAccess = hasAccess;
+        }
+    }
+
 }
