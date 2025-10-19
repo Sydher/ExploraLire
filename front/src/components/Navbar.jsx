@@ -7,7 +7,7 @@ export default function Navbar({ mode, currentPage, onModeChange, onPageChange, 
     };
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
             <div className="container-fluid">
                 <div className="d-flex align-items-center">
                     <span className="navbar-brand mb-0 h1 me-3">ExploraLire</span>

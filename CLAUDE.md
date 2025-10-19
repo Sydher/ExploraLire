@@ -29,7 +29,7 @@ Ensuite l’outil fournira un système de questions intégré pour évaluer l’
 * Respecte les bonnes pratiques de développement et les conventions des langages
 * Evite les commentaires inutiles
 * N'ai pas honte de dire que tu ne sais pas
-* Factorise dès que possible
+* Factorise dès que possible (DRY)
 
 ## Règles de développement Java
 
