@@ -272,7 +272,6 @@ export default function StudentView() {
                     <div className="col-md-9 col-lg-10">
                         {selectedPage ? (
                             <div className="page-content">
-                                <h1 className="mb-4">{selectedPage.name}</h1>
                                 {selectedPage.content ? (
                                     renderContent(selectedPage.content)
                                 ) : (
