@@ -9,55 +9,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  create-release:
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    outputs:
-      release_id: ${{ steps.create-release.outputs.result }}
+  build-tauri-macos:
+    runs-on: macos-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Get version from tag
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-
-      - name: Create release
-        id: create-release
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { data } = await github.rest.repos.createRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: `v${process.env.VERSION}`,
-              name: `ExploraLire v${process.env.VERSION}`,
-              body: 'ExploraLire - Application de lecture de textes composites pour CM1/CM2',
-              draft: true,
-              prerelease: false
-            })
-            return data.id
-
-  build-tauri:
-    needs: create-release
-    permissions:
-      contents: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: 'macos-latest'
-            args: '--target universal-apple-darwin'
-            jre_url: 'https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jre_x64_mac_hotspot_21.0.5_11.tar.gz'
-            jre_extract: 'tar -xzf jre.tar.gz --strip-components=1 -C jre/'
-          - platform: 'windows-latest'
-            args: ''
-            jre_url: 'https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jre_x64_windows_hotspot_21.0.5_11.zip'
-            jre_extract: 'Expand-Archive -Path jre.zip -DestinationPath jre/'
-
-    runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -65,83 +19,42 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: front/package-lock.json
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Install Rust stable
+      - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
-
-      - name: Install dependencies (Ubuntu only)
-        if: matrix.platform == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-
-      - name: Build backend
-        working-directory: back
-        run: mvn clean package -DskipTests
-
-      - name: Download and extract JRE
-        shell: bash
-        run: |
-          mkdir -p jre_temp
-          mkdir -p front/src-tauri/jre
-          if [ "${{ matrix.platform }}" = "windows-latest" ]; then
-            curl -L -o jre.zip "${{ matrix.jre_url }}"
-            powershell -Command "Expand-Archive -Path jre.zip -DestinationPath jre_temp/"
-            echo "Contents of jre_temp:"
-            ls -la jre_temp/
-            find jre_temp -type d -name "jdk*" -o -name "jre*" || true
-            cp -r jre_temp/jdk-*/. front/src-tauri/jre/ 2>/dev/null || cp -r jre_temp/*/. front/src-tauri/jre/ || cp -r jre_temp/. front/src-tauri/jre/
-          else
-            curl -L -o jre.tar.gz "${{ matrix.jre_url }}"
-            tar -xzf jre.tar.gz -C jre_temp/ --strip-components=1
-            echo "Contents of jre_temp:"
-            ls -la jre_temp/
-            if [ -d "jre_temp/Contents/Home" ]; then
-              cp -r jre_temp/Contents/Home/. front/src-tauri/jre/
-            else
-              cp -r jre_temp/. front/src-tauri/jre/
-            fi
-          fi
-          echo "Final JRE structure:"
-          ls -la front/src-tauri/jre/
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
 
       - name: Install frontend dependencies
         working-directory: front
-        run: npm install
+        run: npm ci
 
-      - name: Build Tauri app
-        uses: tauri-apps/tauri-action@v0
+      - name: Build Tauri app (Universal macOS)
+        working-directory: front
+        run: npm run tauri:build -- --target universal-apple-darwin
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-app
+          path: |
+            front/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+            front/src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            front/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+          draft: true
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          releaseId: ${{ needs.create-release.outputs.release_id }}
-          projectPath: front
-          args: ${{ matrix.args }}
-
-  publish-release:
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    needs: [create-release, build-tauri]
-
-    steps:
-      - name: Publish release
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.repos.updateRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: ${{ needs.create-release.outputs.release_id }},
-              draft: false,
-              prerelease: false
-            })
