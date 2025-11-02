@@ -91,20 +91,25 @@ jobs:
       - name: Download and extract JRE
         shell: bash
         run: |
+          mkdir -p jre
           mkdir -p front/src-tauri/jre
           if [ "${{ matrix.platform }}" = "windows-latest" ]; then
             curl -L -o jre.zip "${{ matrix.jre_url }}"
             powershell -Command "${{ matrix.jre_extract }}"
-            mv jre/jdk-*/* front/src-tauri/jre/ || mv jre/*/* front/src-tauri/jre/
+            mv jre/jdk-*/* front/src-tauri/jre/ 2>/dev/null || mv jre/*/* front/src-tauri/jre/
           else
             curl -L -o jre.tar.gz "${{ matrix.jre_url }}"
-            ${{ matrix.jre_extract }}
-            mv jre/Contents/Home/* front/src-tauri/jre/ || mv jre/*/* front/src-tauri/jre/
+            tar -xzf jre.tar.gz -C jre/ --strip-components=1
+            if [ -d "jre/Contents/Home" ]; then
+              mv jre/Contents/Home/* front/src-tauri/jre/
+            else
+              mv jre/* front/src-tauri/jre/
+            fi
           fi
 
       - name: Install frontend dependencies
         working-directory: front
-        run: npm ci
+        run: npm install
 
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0
