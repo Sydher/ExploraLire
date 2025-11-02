@@ -30,7 +30,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: front
-        run: npm ci
+        run: npm install
 
       - name: Build Tauri app (Universal macOS)
         working-directory: front
