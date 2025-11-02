@@ -16,6 +16,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -27,6 +34,18 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Build backend
+        working-directory: back
+        run: ./mvnw clean package -DskipTests
+
+      - name: Copy backend JAR to Tauri resources
+        run: |
+          mkdir -p front/src-tauri/resources
+          cp back/target/quarkus-app/quarkus-run.jar front/src-tauri/resources/
+          cp -r back/target/quarkus-app/lib front/src-tauri/resources/
+          cp -r back/target/quarkus-app/app front/src-tauri/resources/
+          cp -r back/target/quarkus-app/quarkus front/src-tauri/resources/
 
       - name: Install frontend dependencies
         working-directory: front

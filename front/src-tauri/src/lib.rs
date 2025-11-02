@@ -8,7 +8,7 @@ fn start_backend(app_handle: &tauri::AppHandle) -> Result<(), Box<dyn std::error
     let resource_path = app_handle.path().resource_dir()?;
 
     // Path to the backend
-    let backend_path = resource_path.join("back/target/quarkus-app");
+    let backend_path = resource_path;
 
     // Path to bundled JRE
     let jre_path = resource_path.join("jre");
