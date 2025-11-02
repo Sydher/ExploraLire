@@ -215,4 +215,154 @@ class SiteDSTest {
         // then
         assertFalse(result);
     }
+
+    @Test
+    @Transactional
+    void givenSiteWithoutCode_whenVerifyAccessCode_thenReturnsTrue() {
+        // given
+        Site site = new Site();
+        site.name = "Public Site";
+        site.persist();
+
+        // when
+        boolean result = siteDS.verifyAccessCode(site.id, null);
+
+        // then
+        assertTrue(result);
+    }
+
+    @Test
+    @Transactional
+    void givenSiteWithCode_whenVerifyAccessCodeWithCorrectCode_thenReturnsTrue() {
+        // given
+        Site site = new Site();
+        site.name = "Private Site";
+        site.secretCode = "1234";
+        site.persist();
+
+        // when
+        boolean result = siteDS.verifyAccessCode(site.id, "1234");
+
+        // then
+        assertTrue(result);
+    }
+
+    @Test
+    @Transactional
+    void givenSiteWithCode_whenVerifyAccessCodeWithIncorrectCode_thenReturnsFalse() {
+        // given
+        Site site = new Site();
+        site.name = "Private Site";
+        site.secretCode = "1234";
+        site.persist();
+
+        // when
+        boolean result = siteDS.verifyAccessCode(site.id, "wrong");
+
+        // then
+        assertFalse(result);
+    }
+
+    @Test
+    @Transactional
+    void givenSiteWithCode_whenVerifyAccessCodeWithNullCode_thenReturnsFalse() {
+        // given
+        Site site = new Site();
+        site.name = "Private Site";
+        site.secretCode = "1234";
+        site.persist();
+
+        // when
+        boolean result = siteDS.verifyAccessCode(site.id, null);
+
+        // then
+        assertFalse(result);
+    }
+
+    @Test
+    void givenNonExistingSite_whenVerifyAccessCode_thenReturnsFalse() {
+        // when
+        boolean result = siteDS.verifyAccessCode(999L, "1234");
+
+        // then
+        assertFalse(result);
+    }
+
+    @Test
+    @Transactional
+    void givenSiteWithoutCode_whenRequiresAccessCode_thenReturnsFalse() {
+        // given
+        Site site = new Site();
+        site.name = "Public Site";
+        site.persist();
+
+        // when
+        boolean result = siteDS.requiresAccessCode(site.id);
+
+        // then
+        assertFalse(result);
+    }
+
+    @Test
+    @Transactional
+    void givenSiteWithEmptyCode_whenRequiresAccessCode_thenReturnsFalse() {
+        // given
+        Site site = new Site();
+        site.name = "Public Site";
+        site.secretCode = "";
+        site.persist();
+
+        // when
+        boolean result = siteDS.requiresAccessCode(site.id);
+
+        // then
+        assertFalse(result);
+    }
+
+    @Test
+    @Transactional
+    void givenSiteWithCode_whenRequiresAccessCode_thenReturnsTrue() {
+        // given
+        Site site = new Site();
+        site.name = "Private Site";
+        site.secretCode = "1234";
+        site.persist();
+
+        // when
+        boolean result = siteDS.requiresAccessCode(site.id);
+
+        // then
+        assertTrue(result);
+    }
+
+    @Test
+    void givenNonExistingSite_whenRequiresAccessCode_thenReturnsFalse() {
+        // when
+        boolean result = siteDS.requiresAccessCode(999L);
+
+        // then
+        assertFalse(result);
+    }
+
+    @Test
+    @Transactional
+    void givenExistingSite_whenUpdateWithSecretCode_thenSecretCodeIsUpdated() {
+        // given
+        Site site = new Site();
+        site.name = "Test Site";
+        site.persist();
+
+        Site updateData = new Site();
+        updateData.name = "Test Site";
+        updateData.secretCode = "5678";
+
+        // when
+        Site result = siteDS.update(site.id, updateData);
+
+        // then
+        assertNotNull(result);
+        assertEquals("5678", result.secretCode);
+    }
+
 }
+

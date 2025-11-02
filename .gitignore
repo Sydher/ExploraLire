@@ -30,3 +30,4 @@
 !front/vite.config.js
 !front/.env
 !front/.env.development
+!front/.prettierrc

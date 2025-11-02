@@ -14,7 +14,6 @@ Ensuite l’outil fournira un système de questions intégré pour évaluer l’
 * Performances optimisées pour tourner sur un ordinateur d’école
 * Facile d’utilisation par les professeurs moins à l’aise avec l’informatique
 * Fonctionne en hors-ligne pour les écoles non connectées
-* Gratuit car le gouvernement ne donne pas les moyens à ses professeurs
 * Plate-forme à supporter :
     * Windows 10/11
     * MacOS
@@ -30,7 +29,7 @@ Ensuite l’outil fournira un système de questions intégré pour évaluer l’
 * Respecte les bonnes pratiques de développement et les conventions des langages
 * Evite les commentaires inutiles
 * N'ai pas honte de dire que tu ne sais pas
-* Factorise dès que possible
+* Factorise dès que possible (DRY)
 
 ## Règles de développement Java
 
@@ -44,3 +43,4 @@ Ensuite l’outil fournira un système de questions intégré pour évaluer l’
 * Respecte RGAA
 * Bouton d'action à droite (et donc bouton annuler à gauche si présent)
 * Utilise au mieux les fichiers .env
+* Formatte le code selon le fichier .prettierrc

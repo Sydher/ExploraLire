@@ -1,6 +1,6 @@
-import { createCrudService } from './crudService';
+import { createCrudService } from "./crudService";
 
-const labelCrud = createCrudService('/api/labels');
+const labelCrud = createCrudService("/api/labels");
 
 export const getAllLabels = labelCrud.getAll;
 export const createLabel = labelCrud.create;

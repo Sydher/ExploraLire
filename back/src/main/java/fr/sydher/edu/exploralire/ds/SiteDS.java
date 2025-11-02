@@ -38,6 +38,7 @@ public class SiteDS {
             return null;
         }
         site.name = siteData.name;
+        site.secretCode = siteData.secretCode;
 
         if (siteData.labels != null) {
             List<Label> managedLabels = siteData.labels.stream()
@@ -49,6 +50,25 @@ public class SiteDS {
         }
 
         return site;
+    }
+
+    public boolean verifyAccessCode(Long siteId, String code) {
+        Site site = Site.findById(siteId);
+        if (site == null) {
+            return false;
+        }
+        if (site.secretCode == null || site.secretCode.isEmpty()) {
+            return true;
+        }
+        return site.secretCode.equals(code);
+    }
+
+    public boolean requiresAccessCode(Long siteId) {
+        Site site = Site.findById(siteId);
+        if (site == null) {
+            return false;
+        }
+        return site.secretCode != null && !site.secretCode.isEmpty();
     }
 
     @Transactional
