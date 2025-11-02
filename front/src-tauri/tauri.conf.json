@@ -38,9 +38,7 @@
       "jre/**"
     ],
     "windows": {
-      "nsis": {
-        "installMode": "perUser"
-      }
+      "nsis": null
     },
     "macOS": {
       "minimumSystemVersion": "10.15"
