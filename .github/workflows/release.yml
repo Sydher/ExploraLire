@@ -91,21 +91,28 @@ jobs:
       - name: Download and extract JRE
         shell: bash
         run: |
-          mkdir -p jre
+          mkdir -p jre_temp
           mkdir -p front/src-tauri/jre
           if [ "${{ matrix.platform }}" = "windows-latest" ]; then
             curl -L -o jre.zip "${{ matrix.jre_url }}"
-            powershell -Command "${{ matrix.jre_extract }}"
-            mv jre/jdk-*/* front/src-tauri/jre/ 2>/dev/null || mv jre/*/* front/src-tauri/jre/
+            powershell -Command "Expand-Archive -Path jre.zip -DestinationPath jre_temp/"
+            echo "Contents of jre_temp:"
+            ls -la jre_temp/
+            find jre_temp -type d -name "jdk*" -o -name "jre*" || true
+            cp -r jre_temp/jdk-*/. front/src-tauri/jre/ 2>/dev/null || cp -r jre_temp/*/. front/src-tauri/jre/ || cp -r jre_temp/. front/src-tauri/jre/
           else
             curl -L -o jre.tar.gz "${{ matrix.jre_url }}"
-            tar -xzf jre.tar.gz -C jre/ --strip-components=1
-            if [ -d "jre/Contents/Home" ]; then
-              mv jre/Contents/Home/* front/src-tauri/jre/
+            tar -xzf jre.tar.gz -C jre_temp/ --strip-components=1
+            echo "Contents of jre_temp:"
+            ls -la jre_temp/
+            if [ -d "jre_temp/Contents/Home" ]; then
+              cp -r jre_temp/Contents/Home/. front/src-tauri/jre/
             else
-              mv jre/* front/src-tauri/jre/
+              cp -r jre_temp/. front/src-tauri/jre/
             fi
           fi
+          echo "Final JRE structure:"
+          ls -la front/src-tauri/jre/
 
       - name: Install frontend dependencies
         working-directory: front
