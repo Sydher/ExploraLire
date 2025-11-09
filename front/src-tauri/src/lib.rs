@@ -1,5 +1,4 @@
 use std::process::{Command, Child};
-use std::path::PathBuf;
 use tauri::Manager;
 
 static mut BACKEND_PROCESS: Option<Child> = None;
@@ -8,7 +7,7 @@ fn start_backend(app_handle: &tauri::AppHandle) -> Result<(), Box<dyn std::error
     let resource_path = app_handle.path().resource_dir()?;
 
     // Path to the backend
-    let backend_path = resource_path;
+    let backend_path = resource_path.clone();
 
     // Path to bundled JRE
     let jre_path = resource_path.join("jre");
@@ -61,7 +60,7 @@ pub fn run() {
 
       Ok(())
     })
-    .on_window_event(|window, event| {
+    .on_window_event(|_window, event| {
         if let tauri::WindowEvent::Destroyed = event {
             // Kill backend when app closes
             unsafe {
