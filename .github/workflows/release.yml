@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-tauri-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: front/package-lock.json
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Build backend
+        working-directory: back
+        run: ./mvnw clean package -DskipTests
+
+      - name: Download JRE for macOS
+        run: |
+          curl -L -o jre-macos.tar.gz "https://api.adoptium.net/v3/binary/latest/21/ga/mac/aarch64/jre/hotspot/normal/eclipse?project=jdk"
+          mkdir -p front/src-tauri/resources/jre
+          tar -xzf jre-macos.tar.gz -C front/src-tauri/resources/jre --strip-components=1
+
+      - name: Copy backend JAR to Tauri resources
+        run: |
+          mkdir -p front/src-tauri/resources
+          cp back/target/quarkus-app/quarkus-run.jar front/src-tauri/resources/
+          cp -r back/target/quarkus-app/lib front/src-tauri/resources/
+          cp -r back/target/quarkus-app/app front/src-tauri/resources/
+          cp -r back/target/quarkus-app/quarkus front/src-tauri/resources/
+
+      - name: Install frontend dependencies
+        working-directory: front
+        run: npm install
+
+      - name: Build Tauri app (Universal macOS)
+        working-directory: front
+        run: npm run tauri:build -- --target universal-apple-darwin
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
+      - name: Upload macOS artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-app
+          path: |
+            front/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+            front/src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            front/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+          draft: true
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -31,3 +31,21 @@
 !front/.env
 !front/.env.development
 !front/.prettierrc
+
+# Exceptions - Tauri
+!front/src-tauri/
+!front/src-tauri/src/
+!front/src-tauri/src/**
+!front/src-tauri/icons/
+!front/src-tauri/icons/**
+!front/src-tauri/capabilities/
+!front/src-tauri/capabilities/**
+!front/src-tauri/Cargo.toml
+!front/src-tauri/build.rs
+!front/src-tauri/tauri.conf.json
+!front/src-tauri/.gitignore
+
+# Exceptions - GitHub workflows
+!.github/
+!.github/workflows/
+!.github/workflows/**
