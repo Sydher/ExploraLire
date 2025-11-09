@@ -1,4 +1,5 @@
-use std::process::{Command, Child};
+use std::process::{Command, Child, Stdio};
+use std::io::{BufRead, BufReader};
 use tauri::Manager;
 
 static mut BACKEND_PROCESS: Option<Child> = None;
@@ -24,12 +25,38 @@ fn start_backend(app_handle: &tauri::AppHandle) -> Result<(), Box<dyn std::error
         "java".to_string()
     };
 
-    // Start Quarkus backend
-    let child = Command::new(java_cmd)
+    // Start Quarkus backend with stdout/stderr capture
+    let mut child = Command::new(java_cmd)
         .arg("-jar")
         .arg(backend_path.join("quarkus-run.jar"))
         .current_dir(&backend_path)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
         .spawn()?;
+
+    // Capture stdout in a separate thread
+    if let Some(stdout) = child.stdout.take() {
+        std::thread::spawn(move || {
+            let reader = BufReader::new(stdout);
+            for line in reader.lines() {
+                if let Ok(line) = line {
+                    log::info!("[Backend] {}", line);
+                }
+            }
+        });
+    }
+
+    // Capture stderr in a separate thread
+    if let Some(stderr) = child.stderr.take() {
+        std::thread::spawn(move || {
+            let reader = BufReader::new(stderr);
+            for line in reader.lines() {
+                if let Ok(line) = line {
+                    log::error!("[Backend] {}", line);
+                }
+            }
+        });
+    }
 
     unsafe {
         BACKEND_PROCESS = Some(child);
@@ -41,14 +68,12 @@ fn start_backend(app_handle: &tauri::AppHandle) -> Result<(), Box<dyn std::error
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()
+    .plugin(
+      tauri_plugin_log::Builder::default()
+        .level(log::LevelFilter::Info)
+        .build(),
+    )
     .setup(|app| {
-      if cfg!(debug_assertions) {
-        app.handle().plugin(
-          tauri_plugin_log::Builder::default()
-            .level(log::LevelFilter::Info)
-            .build(),
-        )?;
-      }
 
       // Start backend server
       let app_handle = app.handle().clone();
