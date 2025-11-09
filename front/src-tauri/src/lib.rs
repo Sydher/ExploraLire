@@ -14,6 +14,14 @@ fn start_backend(app_handle: &tauri::AppHandle) -> Result<(), Box<dyn std::error
     let jre_path = resource_path.join("jre");
     let java_bin = if cfg!(target_os = "windows") {
         jre_path.join("bin/java.exe")
+    } else if cfg!(target_os = "macos") {
+        // macOS JRE has a different structure when bundled as .app
+        let macos_jre = jre_path.join("Contents/Home/bin/java");
+        if macos_jre.exists() {
+            macos_jre
+        } else {
+            jre_path.join("bin/java")
+        }
     } else {
         jre_path.join("bin/java")
     };

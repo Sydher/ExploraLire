@@ -39,6 +39,12 @@ jobs:
         working-directory: back
         run: ./mvnw clean package -DskipTests
 
+      - name: Download JRE for macOS
+        run: |
+          curl -L -o jre-macos.tar.gz "https://api.adoptium.net/v3/binary/latest/21/ga/mac/aarch64/jre/hotspot/normal/eclipse?project=jdk"
+          mkdir -p front/src-tauri/resources/jre
+          tar -xzf jre-macos.tar.gz -C front/src-tauri/resources/jre --strip-components=1
+
       - name: Copy backend JAR to Tauri resources
         run: |
           mkdir -p front/src-tauri/resources
