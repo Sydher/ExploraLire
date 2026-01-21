@@ -21,7 +21,6 @@ Ensuite l’outil fournira un système de questions intégré pour évaluer l’
     * Android
     * iPad OS
 
-
 # Règles de développement communes
 
 * Code et commentaires en Anglais
@@ -33,7 +32,7 @@ Ensuite l’outil fournira un système de questions intégré pour évaluer l’
 
 ## Règles de développement Java
 
-* Le package parent sera `fr.sydher.edu.exploralire`
+* Le package parent est `fr.sydher.edu.exploralire`
 * Réalise des TU au format "given when then"
 * Ligne vide avant et après le dernier "}" de la classe
 
