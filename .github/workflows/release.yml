@@ -4,8 +4,9 @@ on:
   push:
     tags:
       - "v*"
-    branches:
-      - "feature/**"
+
+permissions:
+  contents: write
 
 jobs:
   build:
