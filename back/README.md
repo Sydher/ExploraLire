@@ -76,3 +76,7 @@ Create your first JPA entity
 Easily start your REST Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+
+## TODO à ranger
+
+./mvnw clean package -Pnative -Dquarkus.native.container-build=true -Dquarkus.native.native-image-xmx=3g -Dquarkus.native.native-image-args=--threads=2 -DskipTests

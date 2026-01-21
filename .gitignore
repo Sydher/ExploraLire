@@ -10,6 +10,7 @@
 !back/
 !back/pom.xml
 !back/src/
+!back/src/main/
 !back/src/**
 !back/mvnw
 !back/mvnw.cmd
@@ -18,16 +19,16 @@
 !back/.mvn/wrapper/**
 
 # Exceptions - dossier front
-!front/
-!front/public/
-!front/public/**
-!front/src/
-!front/src/**
-!front/eslint.config.js
-!front/index.html
-!front/package-lock.json
-!front/package.json
-!front/vite.config.js
-!front/.env
-!front/.env.development
-!front/.prettierrc
+!back/src/main/frontend/
+!back/src/main/frontend/public/
+!back/src/main/frontend/public/**
+!back/src/main/frontend/src/
+!back/src/main/frontend/src/**
+!back/src/main/frontend/eslint.config.js
+!back/src/main/frontend/index.html
+!back/src/main/frontend/package-lock.json
+!back/src/main/frontend/package.json
+!back/src/main/frontend/vite.config.js
+!back/src/main/frontend/.env
+!back/src/main/frontend/.env.development
+!back/src/main/frontend/.prettierrc
