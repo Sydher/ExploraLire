@@ -28,11 +28,47 @@ jobs:
       - name: Build artifact
         run: ./mvnw clean package -Pnative -DskipTests
 
+      # macOS : créer un .app
+      - name: Create macOS .app bundle
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        run: |
+          APP_NAME=Exploralire
+          APP_DIR="$APP_NAME.app/Contents"
+
+          mkdir -p "$APP_DIR/MacOS"
+          mkdir -p "$APP_DIR/Resources"
+
+          cp target/*-runner* "$APP_DIR/MacOS/exploralire"
+          chmod +x "$APP_DIR/MacOS/exploralire"
+
+          cat > "$APP_DIR/Info.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+           "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleName</key>
+            <string>Exploralire</string>
+            <key>CFBundleExecutable</key>
+            <string>exploralire</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.example.exploralire</string>
+            <key>CFBundleVersion</key>
+            <string>${GITHUB_REF_NAME}</string>
+            <key>CFBundlePackageType</key>
+            <string>APPL</string>
+          </dict>
+          </plist>
+          EOF
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: native-${{ matrix.os }}
-          path: target/*-runner*
+          path: |
+            target/*-runner*
+            Exploralire.app
 
   release:
     needs: build
@@ -43,16 +79,18 @@ jobs:
         with:
           path: dist
 
-      - name: Normalize filenames
+      - name: Prepare release assets
         run: |
           mkdir out
+          
           find dist -type f -name "*-runner*" | while read f; do
             os=$(echo "$f" | cut -d/ -f2 | sed 's/native-//')
-            base=$(basename "$f")
             ext=""
             [[ "$os" == windows-latest ]] && ext=".exe"
             cp "$f" "out/exploralire-$os$ext"
           done
+          
+          find dist -type d -name "*.app" -exec cp -R {} out/ \;
 
       - name: Create Release
         uses: softprops/action-gh-release@v1

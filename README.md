@@ -14,13 +14,38 @@ Il fournit également un système de questions intégré pour évaluer l’élè
 
 ### Comment installer et utiliser ExploraLire ?
 
-1. Téléchargement
+#### 1. Téléchargement
 
-TODO
+* Aller sur https://github.com/Sydher/ExploraLire/releases/latest
+* Télécharger la version selon votre système d'opération (Windows, MacOS ou Linux)
 
-2. Installation
+#### 2. Installation
 
-TODO
+* Pour **Windows** aucune installation n'est requise, il faut cependant conserver le fichier .exe qui servira à lancer le logiciel à chaque fois.
+* Pour **MacOS** il faut déplacer le .app dans le dossier *Application*
+* Pour **Linux** aucune installation n'est requise, il faut cependant conserver le fichier runner qui servira à lancer le logiciel à chaque fois.
+
+#### 3. Lancement
+
+* Démarrer l'application
+  * Windows : Double cliquer sur le .exe
+  * MacOS : Lancer le logiciel depuis LaunchPad ou Spotlight
+  * Linux : `./le-runner` dans un terminal
+* L'application est ensuite disponible dans votre navigateur à l'adresse suivante : http://localhost:8080 
+
+### Emplacement des données
+
+Vos données sont stockées dans votre dossier utilisateur :
+
+* Windows : `C:\Users\VotreNom\.exploralire\data\`
+* Mac : `/Users/VotreNom/.exploralire/data/`
+* Linux : `/home/votrenom/.exploralire/data/`
+
+Le fichier de base de données (`exploralire.mv.db`) y sera automatiquement créé au premier lancement.
+
+### Besoin d'aide ?
+
+Ouvrez un ticket sur : https://github.com/Sydher/ExploraLire/issues
 
 ### Développement
 
