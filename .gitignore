@@ -1,24 +1,29 @@
 # Ignorer tout par défaut
 *
 
-# Exceptions - fichiers à la racine
+# Exceptions
 !.gitignore
 !LICENSE
 !*.md
-
-# Exceptions - dossier back
+!.github/
+!.github/**
 !back/
 !back/pom.xml
 !back/src/
 !back/src/main/
-!back/src/**
+!back/src/main/docker/
+!back/src/main/docker/**
+!back/src/main/java/
+!back/src/main/java/**
+!back/src/main/resources/
+!back/src/main/resources/**
+!back/src/test/
+!back/src/test/**
 !back/mvnw
 !back/mvnw.cmd
 !back/.mvn/
 !back/.mvn/wrapper/
 !back/.mvn/wrapper/**
-
-# Exceptions - dossier front
 !back/src/main/frontend/
 !back/src/main/frontend/public/
 !back/src/main/frontend/public/**
