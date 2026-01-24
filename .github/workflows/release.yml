@@ -34,6 +34,10 @@ jobs:
         if: matrix.os == 'macos-latest'
         shell: bash
         run: |
+          # Extract Maven version
+          MAVEN_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Maven version: $MAVEN_VERSION"
+
           # Create .app bundle structure
           mkdir -p ExploraLire.app/Contents/MacOS
           mkdir -p ExploraLire.app/Contents/Resources
@@ -45,12 +49,16 @@ jobs:
           # Copy the launcher script
           cp resources/ExploraLire.sh ExploraLire.app/Contents/MacOS/ExploraLire
           chmod +x ExploraLire.app/Contents/MacOS/ExploraLire
-          
+
           # Copy the icon
           cp resources/ExploraLire.icns ExploraLire.app/Contents/Resources/ExploraLire.icns
-          
-          # Copy the Info.plist
+
+          # Copy and update Info.plist with Maven version
           cp resources/Info.plist ExploraLire.app/Contents/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $MAVEN_VERSION" ExploraLire.app/Contents/Info.plist
+
+          # Ad-hoc code signing to avoid macOS blocking the app
+          codesign --force --deep --sign - ExploraLire.app
 
 
       - name: Upload artifacts
@@ -82,10 +90,10 @@ jobs:
             cp "$f" "out/exploralire-$os$ext"
           done
 
-          # Copy macOS .app bundle and create a zip
+          # Copy macOS .app bundle and create a zip with installer
           if [ -d "dist/native-macos-latest/ExploraLire.app" ]; then
             cd dist/native-macos-latest
-            zip -r ../../out/ExploraLire-macOS.app.zip ExploraLire.app
+            zip -r ../../out/ExploraLire-macOS.app.zip ExploraLire.app install-exploralire.command
             cd ../..
           fi
 

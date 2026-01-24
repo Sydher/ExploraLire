@@ -22,14 +22,18 @@ Il fournit également un système de questions intégré pour évaluer l’élè
 #### 2. Installation
 
 * Pour **Windows** aucune installation n'est requise, il faut cependant conserver le fichier .exe qui servira à lancer le logiciel à chaque fois.
-* Pour **MacOS** il faut déplacer le .app dans le dossier *Application*
+* **MacOS**
+  * Décompresser le fichier _.zip_
+  * Déplacer le fichier _.app_ dans le dossier _Application_
+  * Lancer le logiciel une première fois, la sécurité Apple empêche le lancement
+  * Aller dans les paramètres du Mac > Confidentialité et sécurité > TODO
 * Pour **Linux** aucune installation n'est requise, il faut cependant conserver le fichier runner qui servira à lancer le logiciel à chaque fois.
 
 #### 3. Lancement
 
 * Démarrer l'application
   * Windows : Double cliquer sur le .exe
-  * MacOS : Lancer le logiciel depuis LaunchPad ou Spotlight
+  * MacOS : Lancer le logiciel depuis LaunchPad, Spotlight ou le dossier Application
   * Linux : `./le-runner` dans un terminal
 * L'application est ensuite disponible dans votre navigateur à l'adresse suivante : http://localhost:8080 
 

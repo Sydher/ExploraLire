@@ -6,6 +6,13 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Path to the runner
 RUNNER="$DIR/exploralire-runner"
 
+# Extract version from Info.plist
+INFO_PLIST="$DIR/../Info.plist"
+VERSION="1.0"
+if [ -f "$INFO_PLIST" ]; then
+    VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$INFO_PLIST" 2>/dev/null || echo "1.0")
+fi
+
 # PID file to track the runner process
 PID_FILE="/tmp/exploralire-runner.pid"
 
@@ -59,7 +66,9 @@ Pour accéder à l'application, ouvrez votre navigateur à l'adresse :
 
 http://localhost:8080
 
-Fermez cette fenêtre pour arrêter ExploraLire." buttons {"Ouvrir le navigateur", "Quitter"} default button "Ouvrir le navigateur" with title "ExploraLire" giving up after 999999)
+Fermez cette fenêtre pour arrêter ExploraLire.
+
+Version $VERSION" buttons {"Ouvrir le navigateur", "Quitter"} default button "Ouvrir le navigateur" with title "ExploraLire" giving up after 999999)
 
 if dialogButton is "Ouvrir le navigateur" then
     open location "http://localhost:8080"
@@ -71,7 +80,9 @@ Pour accéder à l'application, ouvrez votre navigateur à l'adresse :
 
 http://localhost:8080
 
-Fermez cette fenêtre pour arrêter ExploraLire." buttons {"Quitter"} default button "Quitter" with title "ExploraLire" giving up after 999999
+Fermez cette fenêtre pour arrêter ExploraLire.
+
+Version $VERSION" buttons {"Quitter"} default button "Quitter" with title "ExploraLire" giving up after 999999
 end if
 EOF
 
