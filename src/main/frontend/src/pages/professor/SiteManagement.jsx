@@ -6,6 +6,8 @@ import ErrorAlert from "../../components/common/ErrorAlert";
 import EntityList from "../../components/common/EntityList";
 import EntityFormCard from "../../components/common/EntityFormCard";
 import { createSiteServiceAdapter } from "../../utils/serviceAdapter";
+import ImportExportButtons from "../../components/site/ImportExportButtons";
+import ExportButton from "../../components/site/ExportButton";
 
 export default function SiteManagement() {
     const [allLabels, setAllLabels] = useState([]);
@@ -25,6 +27,7 @@ export default function SiteManagement() {
         startEdit,
         cancelEdit,
         startCreate,
+        fetchItems,
     } = useEntityManager(service, "sites", { name: "", labels: [], secretCode: "" });
 
     useEffect(() => {
@@ -110,9 +113,12 @@ export default function SiteManagement() {
             <div className="row mb-3">
                 <div className="col">
                     {!isCreating && !editingSite && (
-                        <button onClick={startCreate} className="btn btn-success">
-                            Nouveau Site
-                        </button>
+                        <div className="d-flex gap-2">
+                            <ImportExportButtons onImportSuccess={fetchItems} />
+                            <button onClick={startCreate} className="btn btn-success">
+                                Nouveau Site
+                            </button>
+                        </div>
                     )}
 
                     {(isCreating || editingSite) && (
@@ -152,7 +158,8 @@ export default function SiteManagement() {
                                     placeholder="Laissez vide pour un site public"
                                 />
                                 <div className="form-text">
-                                    Si vous définissez un code, les élèves devront le saisir pour accéder au site
+                                    Si vous définissez un code, les élèves devront le saisir pour accéder au
+                                    site
                                 </div>
                             </div>
 
@@ -195,6 +202,7 @@ export default function SiteManagement() {
                         onEdit={(site) => startEdit(site, prepareFormData)}
                         onDelete={(id) => handleDelete(id, "Êtes-vous sûr de vouloir supprimer ce site ?")}
                         emptyMessage="Aucun site pour le moment"
+                        renderExtraActions={(site) => <ExportButton siteId={site.id} siteName={site.name} />}
                     />
                 </div>
             </div>

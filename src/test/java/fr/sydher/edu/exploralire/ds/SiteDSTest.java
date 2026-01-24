@@ -1,6 +1,7 @@
 package fr.sydher.edu.exploralire.ds;
 
 import fr.sydher.edu.exploralire.entity.Label;
+import fr.sydher.edu.exploralire.entity.Page;
 import fr.sydher.edu.exploralire.entity.Site;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -22,6 +23,7 @@ class SiteDSTest {
     @BeforeEach
     @Transactional
     void cleanup() {
+        Page.deleteAll();
         Site.deleteAll();
         Label.deleteAll();
     }
