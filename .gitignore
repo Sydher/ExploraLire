@@ -1,33 +1,42 @@
 # Ignorer tout par défaut
 *
 
-# Exceptions - fichiers à la racine
+# Exceptions
 !.gitignore
 !LICENSE
 !*.md
-
-# Exceptions - dossier back
-!back/
-!back/pom.xml
-!back/src/
-!back/src/**
-!back/mvnw
-!back/mvnw.cmd
-!back/.mvn/
-!back/.mvn/wrapper/
-!back/.mvn/wrapper/**
-
-# Exceptions - dossier front
-!front/
-!front/public/
-!front/public/**
-!front/src/
-!front/src/**
-!front/eslint.config.js
-!front/index.html
-!front/package-lock.json
-!front/package.json
-!front/vite.config.js
-!front/.env
-!front/.env.development
-!front/.prettierrc
+!.github/
+!.github/**
+!.run/
+!.run/**
+!pom.xml
+!src/
+!src/main/
+!src/main/docker/
+!src/main/docker/**
+!src/main/java/
+!src/main/java/**
+!src/main/resources/
+!src/main/resources/**
+!src/test/
+!src/test/**
+!mvnw
+!mvnw.cmd
+!.mvn/
+!.mvn/wrapper/
+!.mvn/wrapper/**
+!resources/
+!resources/**
+!src/main/frontend/
+!src/main/frontend/public/
+!src/main/frontend/public/**
+!src/main/frontend/src/
+!src/main/frontend/src/**
+!src/main/frontend/eslint.config.js
+!src/main/frontend/index.html
+!src/main/frontend/package-lock.json
+!src/main/frontend/package.json
+!src/main/frontend/vite.config.js
+!src/main/frontend/.env
+!src/main/frontend/.env.development
+!src/main/frontend/.prettierrc

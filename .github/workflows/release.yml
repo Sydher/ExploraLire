@@ -1,0 +1,104 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: "21"
+          distribution: "graalvm"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build artifact
+        run: ./mvnw clean package -Pnative -DskipTests
+
+      # macOS : créer un .app
+      - name: Create macOS .app bundle
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        run: |
+          # Extract Maven version
+          MAVEN_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Maven version: $MAVEN_VERSION"
+
+          # Create .app bundle structure
+          mkdir -p ExploraLire.app/Contents/MacOS
+          mkdir -p ExploraLire.app/Contents/Resources
+
+          # Copy the runner
+          cp target/*-runner ExploraLire.app/Contents/MacOS/exploralire-runner
+          chmod +x ExploraLire.app/Contents/MacOS/exploralire-runner
+
+          # Copy the launcher script
+          cp resources/ExploraLire.sh ExploraLire.app/Contents/MacOS/ExploraLire
+          chmod +x ExploraLire.app/Contents/MacOS/ExploraLire
+
+          # Copy the icon
+          cp resources/ExploraLire.icns ExploraLire.app/Contents/Resources/ExploraLire.icns
+
+          # Copy and update Info.plist with Maven version
+          cp resources/Info.plist ExploraLire.app/Contents/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $MAVEN_VERSION" ExploraLire.app/Contents/Info.plist
+
+          # Ad-hoc code signing to avoid macOS blocking the app
+          codesign --force --deep --sign - ExploraLire.app
+
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-${{ matrix.os }}
+          path: |
+            target/*-runner*
+            ExploraLire.app
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Prepare release assets
+        run: |
+          mkdir out
+
+          # Copy native runners
+          find dist -type f -name "*-runner*" | while read f; do
+            os=$(echo "$f" | cut -d/ -f2 | sed 's/native-//')
+            ext=""
+            [[ "$os" == windows-latest ]] && ext=".exe"
+            cp "$f" "out/exploralire-$os$ext"
+          done
+
+          # Copy macOS .app bundle and create a zip with installer
+          if [ -d "dist/native-macos-latest/ExploraLire.app" ]; then
+            cd dist/native-macos-latest
+            zip -r ../../out/ExploraLire-macOS.app.zip ExploraLire.app install-exploralire.command
+            cd ../..
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: out/*
+          generate_release_notes: true
