@@ -25,6 +25,8 @@
 !.mvn/
 !.mvn/wrapper/
 !.mvn/wrapper/**
+!resources/
+!resources/**
 !src/main/frontend/
 !src/main/frontend/public/
 !src/main/frontend/public/**
