@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="exploralire" type="QuarkusRunConfigurationType" factoryName="Quarkus" nameIsGenerated="true">
+  <configuration default="false" name="Start Backend Local" type="QuarkusRunConfigurationType" factoryName="Quarkus">
     <module name="exploralire" />
     <QsMavenRunConfiguration>
       <MavenSettings>

@@ -49,6 +49,4 @@ Ouvrez un ticket sur : https://github.com/Sydher/ExploraLire/issues
 
 ### Développement
 
-Voir plus de détails dans la [documentation dédiée](#).
-
-JAVA_HOME=$(/usr/libexec/java_home -v 21) ./mvnw clean package -Pnative -DskipTests
+Voir plus de détails dans la [documentation dédiée](#TODO). _A venir_
