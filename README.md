@@ -26,7 +26,8 @@ Il fournit également un système de questions intégré pour évaluer l’élè
   * Décompresser le fichier _.zip_
   * Déplacer le fichier _.app_ dans le dossier _Application_
   * Lancer le logiciel une première fois, la sécurité Apple empêche le lancement
-  * Aller dans les paramètres du Mac > Confidentialité et sécurité > TODO
+  * Aller dans les paramètres du Mac > Confidentialité et sécurité
+  * "ExploraLire.app" a été bloqué pour protéger votre Mac > Ouvrir quand même
 * Pour **Linux** aucune installation n'est requise, il faut cependant conserver le fichier runner qui servira à lancer le logiciel à chaque fois.
 
 #### 3. Lancement
