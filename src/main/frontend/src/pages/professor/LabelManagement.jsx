@@ -29,7 +29,7 @@ export default function LabelManagement() {
         <div className="container mt-4">
             <div className="row mb-4">
                 <div className="col">
-                    <h1 className="display-5">Gestion des Labels</h1>
+                    <h1 className="display-5">Gestion des Catégories</h1>
                 </div>
             </div>
 
@@ -40,7 +40,7 @@ export default function LabelManagement() {
                     {!isCreating && !editingLabel && (
                         <button onClick={startCreate} className="btn btn-success">
                             <i className="bi bi-plus-circle me-2"></i>
-                            Nouveau Label
+                            Nouvelle Catégorie
                         </button>
                     )}
 
@@ -50,12 +50,12 @@ export default function LabelManagement() {
                             editingItem={editingLabel}
                             onSubmit={isCreating ? handleCreate : handleUpdate}
                             onCancel={cancelEdit}
-                            title={isCreating ? "Créer un label" : "Modifier le label"}
+                            title={isCreating ? "Créer une catégorie" : "Modifier la catégorie"}
                         >
                             <div className="row g-3 align-items-end">
                                 <div className="col-md-6">
                                     <label htmlFor="labelName" className="form-label">
-                                        Nom du label
+                                        Nom de la catégorie
                                     </label>
                                     <input
                                         type="text"
@@ -63,7 +63,7 @@ export default function LabelManagement() {
                                         id="labelName"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ name: e.target.value })}
-                                        placeholder="Entrez le nom du label"
+                                        placeholder="Entrez le nom de la catégorie"
                                         required
                                     />
                                 </div>
@@ -79,8 +79,8 @@ export default function LabelManagement() {
                         items={labels}
                         columns={columns}
                         onEdit={startEdit}
-                        onDelete={(id) => handleDelete(id, "Êtes-vous sûr de vouloir supprimer ce label ?")}
-                        emptyMessage="Aucun label pour le moment"
+                        onDelete={(id) => handleDelete(id, "Êtes-vous sûr de vouloir supprimer cette catégorie ?")}
+                        emptyMessage="Aucune catégorie pour le moment"
                     />
                 </div>
             </div>

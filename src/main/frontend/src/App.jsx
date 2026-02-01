@@ -1,7 +1,7 @@
 import { useState } from "react";
-import LabelManagement from "./pages/professor/LabelManagement";
-import SiteManagement from "./pages/professor/SiteManagement";
-import PageManagement from "./pages/professor/PageManagement";
+import ProfessorHome from "./pages/professor/ProfessorHome";
+import SiteView from "./pages/professor/SiteView";
+import PageView from "./pages/professor/PageView";
 import StudentView from "./pages/student/StudentView";
 import HomePage from "./pages/HomePage";
 import Navbar from "./components/Navbar";
@@ -9,33 +9,46 @@ import "./App.css";
 
 function App() {
     const [mode, setMode] = useState(null);
-    const [currentPage, setCurrentPage] = useState("sites");
+    const [nav, setNav] = useState({ view: "home" });
+
+    const navigate = (newNav) => setNav(newNav);
+
+    const handleHomeClick = () => {
+        setMode(null);
+        setNav({ view: "home" });
+    };
 
     if (!mode) {
         return (
             <div className="App">
-                <Navbar mode={null} />
-                <HomePage onSelectMode={setMode} />
+                <Navbar mode={null} onHomeClick={handleHomeClick} />
+                <HomePage onSelectMode={(m) => { setMode(m); setNav({ view: "home" }); }} />
             </div>
         );
     }
 
     return (
         <div className="App">
-            <Navbar
-                mode={mode}
-                currentPage={currentPage}
-                onModeChange={setMode}
-                onPageChange={setCurrentPage}
-                onHomeClick={() => setMode(null)}
-            />
+            <Navbar mode={mode} onHomeClick={handleHomeClick} />
 
             <main>
                 {mode === "teacher" ? (
                     <>
-                        {currentPage === "labels" && <LabelManagement />}
-                        {currentPage === "sites" && <SiteManagement />}
-                        {currentPage === "pages" && <PageManagement />}
+                        {nav.view === "home" && <ProfessorHome onNavigate={navigate} />}
+                        {nav.view === "site" && (
+                            <SiteView
+                                siteId={nav.siteId}
+                                onNavigate={navigate}
+                                onBack={() => navigate({ view: "home" })}
+                            />
+                        )}
+                        {nav.view === "page" && (
+                            <PageView
+                                siteId={nav.siteId}
+                                pageId={nav.pageId}
+                                onBack={() => navigate({ view: "site", siteId: nav.siteId })}
+                            />
+                        )}
                     </>
                 ) : (
                     <StudentView />

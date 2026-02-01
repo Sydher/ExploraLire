@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { exportSite, downloadSiteAsFile } from "../../services/siteService";
+import { downloadSiteAsZip } from "../../services/siteService";
 
 export default function ExportButton({ siteId, siteName }) {
     const [loading, setLoading] = useState(false);
@@ -10,8 +10,7 @@ export default function ExportButton({ siteId, siteName }) {
         setError(null);
 
         try {
-            const exportData = await exportSite(siteId);
-            downloadSiteAsFile(exportData, siteName);
+            await downloadSiteAsZip(siteId, siteName);
         } catch (err) {
             console.error("Erreur lors de l'export:", err);
             setError(import.meta.env.VITE_ERR_EXPORT || "Erreur lors de l'export du site.");
@@ -24,19 +23,24 @@ export default function ExportButton({ siteId, siteName }) {
         <>
             <button
                 onClick={handleExport}
-                className="btn btn-sm btn-outline-secondary me-2"
+                className="btn btn-info"
                 disabled={loading}
                 aria-label={`Exporter le site ${siteName}`}
-                title="Exporter le site"
             >
                 {loading ? (
-                    <span
-                        className="spinner-border spinner-border-sm"
-                        role="status"
-                        aria-hidden="true"
-                    ></span>
+                    <>
+                        <span
+                            className="spinner-border spinner-border-sm me-1"
+                            role="status"
+                            aria-hidden="true"
+                        ></span>
+                        Export en cours...
+                    </>
                 ) : (
-                    <i className="bi bi-download"></i>
+                    <>
+                        <i className="bi bi-download me-1"></i>
+                        Exporter
+                    </>
                 )}
             </button>
             {error && (
