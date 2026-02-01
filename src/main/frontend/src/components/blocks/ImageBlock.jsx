@@ -97,8 +97,29 @@ export default function ImageBlock({ block, onChange, onDelete }) {
                 />
             </div>
 
+            <div className="mb-2">
+                <span className="form-label small d-block">Taille de l'image</span>
+                <div className="btn-group" role="group" aria-label="Taille de l'image">
+                    {[
+                        { value: 25, label: "Petit" },
+                        { value: 50, label: "Moyen" },
+                        { value: 75, label: "Grand" },
+                        { value: 100, label: "Taille réelle" },
+                    ].map(({ value, label }) => (
+                        <button
+                            key={value}
+                            type="button"
+                            className={`btn btn-sm ${(block.width || 100) === value ? "btn-primary" : "btn-outline-primary"}`}
+                            onClick={() => onChange({ ...block, width: value })}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
             {imageUrl && (
-                <div className="mt-2">
+                <figure className="mt-2">
                     <img
                         src={imageUrl}
                         alt={block.alt || "Aperçu"}
@@ -108,7 +129,12 @@ export default function ImageBlock({ block, onChange, onDelete }) {
                             e.target.style.display = "none";
                         }}
                     />
-                </div>
+                    {block.caption && (
+                        <figcaption className="fst-italic text-secondary mt-1">
+                            {block.caption}
+                        </figcaption>
+                    )}
+                </figure>
             )}
         </div>
     );

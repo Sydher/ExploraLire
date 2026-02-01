@@ -153,13 +153,14 @@ export default function StudentView() {
                 return <div dangerouslySetInnerHTML={{ __html: block.text }} />;
             case "image": {
                 const imgSrc = block.filename ? getImageUrl(block.filename) : block.url;
+                const imgWidth = `${block.width || 100}%`;
                 return (
-                    <figure>
+                    <figure style={{ width: imgWidth }}>
                         <img
                             src={imgSrc}
                             alt={block.alt}
                             className="img-fluid rounded"
-                            style={{ maxWidth: "100%" }}
+                            style={{ width: "100%" }}
                         />
                         {block.caption && (
                             <figcaption className="fst-italic text-secondary mt-1">
