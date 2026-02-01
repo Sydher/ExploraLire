@@ -33,9 +33,6 @@ export default function StudentView() {
             setLoading(true);
             const data = await siteService.getAllSites();
             setSites(data);
-            if (data.length > 0) {
-                handleSiteSelection(data[0]);
-            }
         } catch (error) {
             setError(ERR_LOAD);
             console.error("Erreur lors du chargement des sites :", error);

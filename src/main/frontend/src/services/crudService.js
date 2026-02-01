@@ -6,6 +6,10 @@ export const createCrudService = (endpoint) => {
             return apiGet(endpoint);
         },
 
+        getById: async (id) => {
+            return apiGet(`${endpoint}/${id}`);
+        },
+
         create: async (data) => {
             return apiPost(endpoint, data);
         },

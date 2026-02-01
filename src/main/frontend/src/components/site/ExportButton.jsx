@@ -23,19 +23,24 @@ export default function ExportButton({ siteId, siteName }) {
         <>
             <button
                 onClick={handleExport}
-                className="btn btn-sm btn-outline-secondary me-2"
+                className="btn btn-info"
                 disabled={loading}
                 aria-label={`Exporter le site ${siteName}`}
-                title="Exporter le site"
             >
                 {loading ? (
-                    <span
-                        className="spinner-border spinner-border-sm"
-                        role="status"
-                        aria-hidden="true"
-                    ></span>
+                    <>
+                        <span
+                            className="spinner-border spinner-border-sm me-1"
+                            role="status"
+                            aria-hidden="true"
+                        ></span>
+                        Export en cours...
+                    </>
                 ) : (
-                    <i className="bi bi-download"></i>
+                    <>
+                        <i className="bi bi-download me-1"></i>
+                        Exporter
+                    </>
                 )}
             </button>
             {error && (

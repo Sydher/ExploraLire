@@ -6,6 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 const siteCrud = createCrudService("/api/sites");
 
 export const getAllSites = siteCrud.getAll;
+export const getSiteById = siteCrud.getById;
 export const createSite = siteCrud.create;
 export const updateSite = siteCrud.update;
 export const deleteSite = siteCrud.delete;

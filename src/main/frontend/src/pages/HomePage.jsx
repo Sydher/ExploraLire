@@ -22,10 +22,10 @@ export default function HomePage({ onSelectMode }) {
                                 onClick={() => onSelectMode("teacher")}
                             >
                                 <div className="card-body text-center p-5">
-                                    <div className="mb-4">
-                                        <i className="bi bi-person-gear display-1 text-primary"></i>
-                                    </div>
-                                    <h2 className="card-title h3 mb-3">Mode Professeur</h2>
+                                    <h2 className="card-title h3 mb-3">
+                                        <i className="bi bi-person-gear me-2"></i>
+                                        Mode Professeur
+                                    </h2>
                                     <p className="card-text text-muted">
                                         Créez et gérez des sites web pédagogiques pour vos élèves. Organisez
                                         les contenus avec des pages, des images et des labels.
@@ -45,10 +45,10 @@ export default function HomePage({ onSelectMode }) {
                                 onClick={() => onSelectMode("student")}
                             >
                                 <div className="card-body text-center p-5">
-                                    <div className="mb-4">
-                                        <i className="bi bi-person display-1 text-success"></i>
-                                    </div>
-                                    <h2 className="card-title h3 mb-3">Mode Élève</h2>
+                                    <h2 className="card-title h3 mb-3">
+                                        <i className="bi bi-person me-2"></i>
+                                        Mode Élève
+                                    </h2>
                                     <p className="card-text text-muted">
                                         Découvrez et explorez les sites créés par votre professeur. Naviguez
                                         entre les pages pour trouver des informations.
@@ -96,6 +96,31 @@ export default function HomePage({ onSelectMode }) {
                             </div>
                         </div>
                     </div>
+
+                    <footer className="text-center mt-5 mb-4 text-muted small">
+                        <p className="mb-1">&copy; 2025 – 2026 ExploraLire</p>
+                        <p className="mb-1">
+                            Licence{" "}
+                            <a
+                                href="https://creativecommons.org/licenses/by-nc/4.0/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                CC BY-NC 4.0
+                            </a>
+                        </p>
+                        <p className="mb-1">
+                            Créé par{" "}
+                            <a href="https://github.com/Sydher" target="_blank" rel="noopener noreferrer">
+                                Sydher
+                            </a>
+                        </p>
+                        <p className="mb-0">
+                            <a href="#TODO_DONATION" target="_blank" rel="noopener noreferrer">
+                                Soutenir le projet
+                            </a>
+                        </p>
+                    </footer>
                 </div>
             </div>
         </div>
