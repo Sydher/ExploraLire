@@ -1,4 +1,4 @@
-export default function EntityList({ items, columns, onEdit, onDelete, emptyMessage }) {
+export default function EntityList({ items, columns, onEdit, onDelete, emptyMessage, renderExtraActions }) {
     if (items.length === 0) {
         return (
             <div className="alert alert-info" role="alert">
@@ -28,11 +28,10 @@ export default function EntityList({ items, columns, onEdit, onDelete, emptyMess
                         <tr key={item.id}>
                             <td>{item.id}</td>
                             {columns.map((col) => (
-                                <td key={col.key}>
-                                    {col.render ? col.render(item) : item[col.key]}
-                                </td>
+                                <td key={col.key}>{col.render ? col.render(item) : item[col.key]}</td>
                             ))}
                             <td className="text-end">
+                                {renderExtraActions && renderExtraActions(item)}
                                 <button
                                     onClick={() => onEdit(item)}
                                     className="btn btn-sm btn-warning me-2"
