@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -46,7 +46,7 @@ function SortableBlock({ block, onUpdate, onDelete }) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="card mb-2">
+    <div ref={setNodeRef} style={style} className="card mb-2" data-block-id={block.id}>
       <div className="card-body p-2">
         <div className="d-flex">
           <button
@@ -116,7 +116,7 @@ function DroppableColumn({ columnId, blocks, onUpdate, onDelete, onDeleteColumn,
 
 function Row({ row, rowIndex, onUpdate, onDeleteRow, onDeleteColumn, onAddColumn }) {
   return (
-    <div className="card mb-3">
+    <div className="card mb-3" data-block-id={row.id}>
       <div className="card-header d-flex justify-content-between align-items-center">
         <span>
           <i className="bi bi-layout-three-columns me-2"></i>
@@ -166,6 +166,7 @@ function Row({ row, rowIndex, onUpdate, onDeleteRow, onDeleteColumn, onAddColumn
 export default function BlockEditor({ blocks, onChange }) {
   const [layout, setLayout] = useState([]);
   const [activeId, setActiveId] = useState(null);
+  const [scrollTargetId, setScrollTargetId] = useState(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -193,14 +194,27 @@ export default function BlockEditor({ blocks, onChange }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (!scrollTargetId) return;
+    const timer = setTimeout(() => {
+      const el = document.querySelector(`[data-block-id="${scrollTargetId}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      setScrollTargetId(null);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [scrollTargetId]);
+
   const notifyChange = (newLayout) => {
     setLayout(newLayout);
     onChange(newLayout);
   };
 
   const addRow = () => {
+    const rowId = `row-${Date.now()}`;
     const newRow = {
-      id: `row-${Date.now()}`,
+      id: rowId,
       columns: [
         {
           id: `col-${Date.now()}`,
@@ -209,6 +223,7 @@ export default function BlockEditor({ blocks, onChange }) {
       ],
     };
     notifyChange([...layout, newRow]);
+    setScrollTargetId(rowId);
   };
 
   const deleteRow = (rowIndex) => {
@@ -267,6 +282,8 @@ export default function BlockEditor({ blocks, onChange }) {
       newLayout[layout.length - 1].columns[0].blocks.push(newBlock);
       notifyChange(newLayout);
     }
+
+    setScrollTargetId(newBlock.id);
   };
 
   const updateBlock = (rowIndex, colIndex, blockId, updatedBlock) => {
@@ -358,7 +375,7 @@ export default function BlockEditor({ blocks, onChange }) {
 
   return (
     <div>
-      <div className="d-flex gap-2 mb-3 flex-wrap">
+      <div className="d-flex gap-2 mb-3 flex-wrap bg-white py-2 sticky-top" style={{ zIndex: 10 }}>
         <button type="button" onClick={addRow} className="btn btn-outline-success btn-sm">
           <i className="bi bi-plus-square me-1"></i>
           Ajouter une ligne
