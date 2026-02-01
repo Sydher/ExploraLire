@@ -84,7 +84,7 @@ export default function SiteManagement() {
         },
         {
             key: "labels",
-            header: "Labels",
+            header: "Catégories",
             render: (site) =>
                 site.labels && site.labels.length > 0 ? (
                     <div className="d-flex flex-wrap gap-1">
@@ -95,7 +95,7 @@ export default function SiteManagement() {
                         ))}
                     </div>
                 ) : (
-                    <span className="text-muted">Aucun label</span>
+                    <span className="text-muted">Aucune catégorie</span>
                 ),
         },
     ];
@@ -164,9 +164,9 @@ export default function SiteManagement() {
                             </div>
 
                             <fieldset className="mb-3">
-                                <legend className="form-label">Labels associés</legend>
+                                <legend className="form-label">Catégories associées</legend>
                                 {allLabels.length === 0 ? (
-                                    <p className="text-muted">Aucun label disponible</p>
+                                    <p className="text-muted">Aucune catégorie disponible</p>
                                 ) : (
                                     <div className="d-flex flex-wrap gap-2">
                                         {allLabels.map((label) => (

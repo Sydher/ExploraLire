@@ -64,7 +64,7 @@ export default function ProfessorHome({ onNavigate }) {
         },
         {
             key: "labels",
-            header: "Labels",
+            header: "Catégories",
             render: (site) =>
                 site.labels && site.labels.length > 0 ? (
                     <div className="d-flex flex-wrap gap-1">
@@ -75,7 +75,7 @@ export default function ProfessorHome({ onNavigate }) {
                         ))}
                     </div>
                 ) : (
-                    <span className="text-muted">Aucun label</span>
+                    <span className="text-muted">Aucune catégorie</span>
                 ),
         },
     ];
@@ -143,14 +143,14 @@ export default function ProfessorHome({ onNavigate }) {
                 </div>
 
                 <div className="col-md-4">
-                    <h2 className="h4 mb-4">Labels</h2>
+                    <h1 className="display-5 mb-4">Catégories</h1>
 
                     <ErrorAlert error={labelError} onClose={() => setLabelError(null)} />
 
                     {!isCreatingLabel && !editingLabel && (
-                        <button onClick={startCreateLabel} className="btn btn-success btn-sm mb-3">
+                        <button onClick={startCreateLabel} className="btn btn-success mb-3">
                             <i className="bi bi-plus-circle me-2"></i>
-                            Nouveau Label
+                            Nouvelle Catégorie
                         </button>
                     )}
 
@@ -160,12 +160,12 @@ export default function ProfessorHome({ onNavigate }) {
                             editingItem={editingLabel}
                             onSubmit={isCreatingLabel ? handleCreateLabel : handleUpdateLabel}
                             onCancel={cancelEditLabel}
-                            title={isCreatingLabel ? "Créer un label" : "Modifier le label"}
+                            title={isCreatingLabel ? "Créer une catégorie" : "Modifier la catégorie"}
                         >
                             <div className="row g-3 align-items-end">
                                 <div className="col">
                                     <label htmlFor="labelName" className="form-label">
-                                        Nom du label
+                                        Nom de la catégorie
                                     </label>
                                     <input
                                         type="text"
@@ -173,7 +173,7 @@ export default function ProfessorHome({ onNavigate }) {
                                         id="labelName"
                                         value={labelFormData.name}
                                         onChange={(e) => setLabelFormData({ name: e.target.value })}
-                                        placeholder="Entrez le nom du label"
+                                        placeholder="Entrez le nom de la catégorie"
                                         required
                                     />
                                 </div>
@@ -186,9 +186,9 @@ export default function ProfessorHome({ onNavigate }) {
                         columns={labelColumns}
                         onEdit={startEditLabel}
                         onDelete={(id) =>
-                            handleDeleteLabel(id, "Êtes-vous sûr de vouloir supprimer ce label ?")
+                            handleDeleteLabel(id, "Êtes-vous sûr de vouloir supprimer cette catégorie ?")
                         }
-                        emptyMessage="Aucun label pour le moment"
+                        emptyMessage="Aucune catégorie pour le moment"
                     />
                 </div>
             </div>

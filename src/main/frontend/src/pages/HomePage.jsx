@@ -28,7 +28,7 @@ export default function HomePage({ onSelectMode }) {
                                     </h2>
                                     <p className="card-text text-muted">
                                         Créez et gérez des sites web pédagogiques pour vos élèves. Organisez
-                                        les contenus avec des pages, des images et des labels.
+                                        les contenus avec des pages, des images et des catégories.
                                     </p>
                                     <button className="btn btn-primary btn-lg mt-3">
                                         Accéder à la gestion
@@ -98,7 +98,6 @@ export default function HomePage({ onSelectMode }) {
                     </div>
 
                     <footer className="text-center mt-5 mb-4 text-muted small">
-                        <p className="mb-1">&copy; 2025 – 2026 ExploraLire</p>
                         <p className="mb-1">
                             Licence{" "}
                             <a
@@ -108,6 +107,7 @@ export default function HomePage({ onSelectMode }) {
                             >
                                 CC BY-NC 4.0
                             </a>
+                            &nbsp;&copy; 2025 - 2026 ExploraLire
                         </p>
                         <p className="mb-1">
                             Créé par{" "}

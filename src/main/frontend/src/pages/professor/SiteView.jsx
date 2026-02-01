@@ -182,9 +182,9 @@ export default function SiteView({ siteId, onNavigate, onBack }) {
                     </div>
                 </div>
                 <fieldset className="mb-3">
-                    <legend className="form-label">Labels associés</legend>
+                    <legend className="form-label">Catégories associées</legend>
                     {allLabels.length === 0 ? (
-                        <p className="text-muted">Aucun label disponible</p>
+                        <p className="text-muted">Aucune catégorie disponible</p>
                     ) : (
                         <div className="d-flex flex-wrap gap-2">
                             {allLabels.map((label) => (
