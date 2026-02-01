@@ -5,7 +5,7 @@ export default function HomePage({ onSelectMode }) {
                 <div className="col-lg-8">
                     <div className="text-center mb-2">
                         <h1 className="display-3 fw-bold text-primary mb-3">
-                            <i className="bi bi-book-half me-3"></i>
+                            <img src="/ExploraLire Logo.png" alt="" width="235" height="149" className="me-3" />
                             ExploraLire
                         </h1>
                         <p className="lead text-muted">
