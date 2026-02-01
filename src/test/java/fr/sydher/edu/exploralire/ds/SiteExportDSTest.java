@@ -12,8 +12,15 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,12 +30,24 @@ class SiteExportDSTest {
     @Inject
     SiteExportDS siteExportDS;
 
+    @Inject
+    ImageDS imageDS;
+
     @BeforeEach
     @Transactional
-    void cleanup() {
+    void cleanup() throws IOException {
         Page.deleteAll();
         Site.deleteAll();
         Label.deleteAll();
+
+        java.nio.file.Path dir = imageDS.getStorageDir();
+        if (Files.exists(dir)) {
+            try (var files = Files.list(dir)) {
+                files.forEach(f -> {
+                    try { Files.deleteIfExists(f); } catch (IOException ignored) {}
+                });
+            }
+        }
     }
 
     @Test
@@ -251,4 +270,101 @@ class SiteExportDSTest {
         assertEquals("1.0", migratedData.formatVersion);
     }
 
+    @Test
+    @Transactional
+    void givenSiteWithImageBlock_whenExportAsZip_thenZipContainsSiteJsonAndImage() throws IOException {
+        // given
+        String filename = imageDS.store(new ByteArrayInputStream("img-data".getBytes()), "photo.png");
+
+        Site site = new Site();
+        site.name = "Site Images";
+        site.persist();
+
+        Page page = new Page();
+        page.name = "Page 1";
+        page.content = "[{\"columns\":[{\"blocks\":[{\"type\":\"image\",\"filename\":\"" + filename + "\",\"alt\":\"test\"}]}]}]";
+        page.site = site;
+        page.persist();
+
+        // when
+        byte[] zipData = siteExportDS.exportSiteAsZip(site);
+
+        // then
+        assertNotNull(zipData);
+        assertTrue(zipData.length > 0);
+
+        boolean hasSiteJson = false;
+        boolean hasImage = false;
+        try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zipData))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if ("site.json".equals(entry.getName())) hasSiteJson = true;
+                if (entry.getName().startsWith("images/") && entry.getName().endsWith(".png")) hasImage = true;
+                zis.closeEntry();
+            }
+        }
+        assertTrue(hasSiteJson);
+        assertTrue(hasImage);
+    }
+
+    @Test
+    void givenValidZipWithSiteJson_whenImportFromZip_thenCreatesSite() throws IOException {
+        // given
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            zos.putNextEntry(new ZipEntry("site.json"));
+            String json = "{\"formatVersion\":\"1.0\",\"site\":{\"name\":\"ZIP Site\",\"pages\":[]}}";
+            zos.write(json.getBytes());
+            zos.closeEntry();
+        }
+
+        // when
+        SiteImportResultDTO result = siteExportDS.importSiteFromZip(new ByteArrayInputStream(baos.toByteArray()));
+
+        // then
+        assertTrue(result.success);
+        assertEquals("ZIP Site", result.siteName);
+    }
+
+    @Test
+    void givenZipWithImages_whenImportFromZip_thenImagesAreStored() throws IOException {
+        // given
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            zos.putNextEntry(new ZipEntry("site.json"));
+            String json = "{\"formatVersion\":\"1.0\",\"site\":{\"name\":\"IMG Site\",\"pages\":[{\"name\":\"P1\",\"content\":[{\"columns\":[{\"blocks\":[{\"type\":\"image\",\"filename\":\"test-img.png\",\"alt\":\"a\"}]}]}]}]}}";
+            zos.write(json.getBytes());
+            zos.closeEntry();
+
+            zos.putNextEntry(new ZipEntry("images/test-img.png"));
+            zos.write("fake-png".getBytes());
+            zos.closeEntry();
+        }
+
+        // when
+        SiteImportResultDTO result = siteExportDS.importSiteFromZip(new ByteArrayInputStream(baos.toByteArray()));
+
+        // then
+        assertTrue(result.success);
+        assertNotNull(imageDS.load("test-img.png"));
+    }
+
+    @Test
+    void givenZipWithoutSiteJson_whenImportFromZip_thenReturnsFailure() throws IOException {
+        // given
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            zos.putNextEntry(new ZipEntry("other.txt"));
+            zos.write("hello".getBytes());
+            zos.closeEntry();
+        }
+
+        // when
+        SiteImportResultDTO result = siteExportDS.importSiteFromZip(new ByteArrayInputStream(baos.toByteArray()));
+
+        // then
+        assertFalse(result.success);
+    }
+
 }
+

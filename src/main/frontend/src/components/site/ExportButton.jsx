@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { exportSite, downloadSiteAsFile } from "../../services/siteService";
+import { downloadSiteAsZip } from "../../services/siteService";
 
 export default function ExportButton({ siteId, siteName }) {
     const [loading, setLoading] = useState(false);
@@ -10,8 +10,7 @@ export default function ExportButton({ siteId, siteName }) {
         setError(null);
 
         try {
-            const exportData = await exportSite(siteId);
-            downloadSiteAsFile(exportData, siteName);
+            await downloadSiteAsZip(siteId, siteName);
         } catch (err) {
             console.error("Erreur lors de l'export:", err);
             setError(import.meta.env.VITE_ERR_EXPORT || "Erreur lors de l'export du site.");

@@ -247,7 +247,7 @@ export default function BlockEditor({ blocks, onChange }) {
     } else if (type === 'text') {
       newBlock.text = '';
     } else if (type === 'image') {
-      newBlock.url = '';
+      newBlock.filename = '';
       newBlock.alt = '';
     }
 

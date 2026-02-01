@@ -2,6 +2,7 @@ package fr.sydher.edu.exploralire.ds;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fr.sydher.edu.exploralire.dto.ImportValidationErrorDTO;
 import fr.sydher.edu.exploralire.dto.SiteExportDTO;
 import fr.sydher.edu.exploralire.dto.SiteImportResultDTO;
@@ -12,11 +13,21 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 @ApplicationScoped
 public class SiteExportDS {
@@ -25,10 +36,13 @@ public class SiteExportDS {
     private static final String APPLICATION_NAME = "ExploraLire";
     private static final DateTimeFormatter DATE_SUFFIX_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @Inject
     ContentSanitizerDS contentSanitizerDS;
+
+    @Inject
+    ImageDS imageDS;
 
     @Transactional
     public SiteExportDTO exportSite(Site site) {
@@ -173,6 +187,101 @@ public class SiteExportDS {
         }
 
         return importData;
+    }
+
+    public byte[] exportSiteAsZip(Site site) throws IOException {
+        SiteExportDTO exportData = exportSite(site);
+        Set<String> imageFilenames = collectImageFilenames(exportData);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            zos.putNextEntry(new ZipEntry("site.json"));
+            zos.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsBytes(exportData));
+            zos.closeEntry();
+
+            for (String filename : imageFilenames) {
+                Path imagePath = imageDS.load(filename);
+                if (imagePath != null) {
+                    zos.putNextEntry(new ZipEntry("images/" + filename));
+                    Files.copy(imagePath, zos);
+                    zos.closeEntry();
+                }
+            }
+        }
+
+        return baos.toByteArray();
+    }
+
+    @Transactional
+    public SiteImportResultDTO importSiteFromZip(InputStream zipStream) throws IOException {
+        SiteExportDTO importData = null;
+        List<ZipImageEntry> images = new ArrayList<>();
+
+        try (ZipInputStream zis = new ZipInputStream(zipStream)) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (entry.isDirectory()) continue;
+
+                if ("site.json".equals(entry.getName())) {
+                    byte[] data = zis.readAllBytes();
+                    importData = objectMapper.readValue(data, SiteExportDTO.class);
+                } else if (entry.getName().startsWith("images/")) {
+                    String filename = entry.getName().substring("images/".length());
+                    if (!filename.isEmpty()) {
+                        images.add(new ZipImageEntry(filename, zis.readAllBytes()));
+                    }
+                }
+
+                zis.closeEntry();
+            }
+        }
+
+        if (importData == null) {
+            return SiteImportResultDTO.failure(List.of(
+                    new ImportValidationErrorDTO("zip", "Le fichier ZIP ne contient pas de site.json")
+            ));
+        }
+
+        for (ZipImageEntry img : images) {
+            Path targetDir = imageDS.getStorageDir();
+            Files.createDirectories(targetDir);
+            Files.write(targetDir.resolve(img.filename), img.data);
+        }
+
+        return importSite(importData);
+    }
+
+    private Set<String> collectImageFilenames(SiteExportDTO exportData) {
+        Set<String> filenames = new HashSet<>();
+        if (exportData.site == null || exportData.site.pages == null) return filenames;
+
+        for (SiteExportDTO.PageData page : exportData.site.pages) {
+            if (page.content == null) continue;
+            try {
+                String json = objectMapper.writeValueAsString(page.content);
+                collectFilenamesFromJson(objectMapper.readTree(json), filenames);
+            } catch (JsonProcessingException ignored) {
+            }
+        }
+        return filenames;
+    }
+
+    private void collectFilenamesFromJson(com.fasterxml.jackson.databind.JsonNode node, Set<String> filenames) {
+        if (node == null) return;
+        if (node.isObject()) {
+            if (node.has("filename") && node.get("filename").isTextual()) {
+                String val = node.get("filename").asText();
+                if (!val.isBlank()) filenames.add(val);
+            }
+            node.fields().forEachRemaining(e -> collectFilenamesFromJson(e.getValue(), filenames));
+        } else if (node.isArray()) {
+            for (com.fasterxml.jackson.databind.JsonNode child : node) {
+                collectFilenamesFromJson(child, filenames);
+            }
+        }
+    }
+
+    private record ZipImageEntry(String filename, byte[] data) {
     }
 
 }

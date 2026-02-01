@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import * as siteService from "../../services/siteService";
 import * as pageService from "../../services/pageService";
+import { getImageUrl } from "../../services/imageService";
 import AccessCodeModal from "../../components/AccessCodeModal";
 
 const ERR_LOAD = import.meta.env.VITE_ERR_LOAD;
@@ -150,15 +151,17 @@ export default function StudentView() {
                 return <TitleTag>{block.text}</TitleTag>;
             case "text":
                 return <div dangerouslySetInnerHTML={{ __html: block.text }} />;
-            case "image":
+            case "image": {
+                const imgSrc = block.filename ? getImageUrl(block.filename) : block.url;
                 return (
                     <img
-                        src={block.url}
+                        src={imgSrc}
                         alt={block.alt}
                         className="img-fluid rounded"
                         style={{ maxWidth: "100%" }}
                     />
                 );
+            }
             default:
                 return null;
         }

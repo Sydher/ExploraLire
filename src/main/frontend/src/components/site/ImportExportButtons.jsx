@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { importSite } from "../../services/siteService";
+import { importSite, importSiteFromZip } from "../../services/siteService";
 import ImportResultModal from "./ImportResultModal";
 
 export default function ImportExportButtons({ onImportSuccess }) {
@@ -18,9 +18,16 @@ export default function ImportExportButtons({ onImportSuccess }) {
         setLoading(true);
 
         try {
-            const content = await readFileContent(file);
-            const importData = JSON.parse(content);
-            const result = await importSite(importData);
+            let result;
+
+            if (file.name.endsWith(".zip")) {
+                result = await importSiteFromZip(file);
+            } else {
+                const content = await readFileContent(file);
+                const importData = JSON.parse(content);
+                result = await importSite(importData);
+            }
+
             setImportResult(result);
 
             if (result.success && onImportSuccess) {
@@ -36,7 +43,7 @@ export default function ImportExportButtons({ onImportSuccess }) {
                         message:
                             err instanceof SyntaxError
                                 ? "Le fichier n'est pas un JSON valide."
-                                : "Erreur lors de la lecture du fichier.",
+                                : err.message || "Erreur lors de la lecture du fichier.",
                     },
                 ],
             });
@@ -67,7 +74,7 @@ export default function ImportExportButtons({ onImportSuccess }) {
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                accept=".json"
+                accept=".json,.zip"
                 style={{ display: "none" }}
                 aria-hidden="true"
             />
@@ -75,7 +82,7 @@ export default function ImportExportButtons({ onImportSuccess }) {
                 onClick={handleFileSelect}
                 className="btn btn-outline-primary me-2"
                 disabled={loading}
-                aria-label="Importer un site depuis un fichier JSON"
+                aria-label="Importer un site depuis un fichier"
             >
                 {loading ? (
                     <>
