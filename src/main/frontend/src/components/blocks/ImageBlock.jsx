@@ -83,6 +83,20 @@ export default function ImageBlock({ block, onChange, onDelete }) {
                 />
             </div>
 
+            <div className="mb-2">
+                <label htmlFor={`image-caption-${block.id}`} className="form-label small">
+                    Légende (facultatif)
+                </label>
+                <input
+                    type="text"
+                    id={`image-caption-${block.id}`}
+                    className="form-control"
+                    value={block.caption || ""}
+                    onChange={(e) => onChange({ ...block, caption: e.target.value })}
+                    placeholder="Légende de l'image"
+                />
+            </div>
+
             {imageUrl && (
                 <div className="mt-2">
                     <img

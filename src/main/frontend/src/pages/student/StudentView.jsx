@@ -154,12 +154,19 @@ export default function StudentView() {
             case "image": {
                 const imgSrc = block.filename ? getImageUrl(block.filename) : block.url;
                 return (
-                    <img
-                        src={imgSrc}
-                        alt={block.alt}
-                        className="img-fluid rounded"
-                        style={{ maxWidth: "100%" }}
-                    />
+                    <figure>
+                        <img
+                            src={imgSrc}
+                            alt={block.alt}
+                            className="img-fluid rounded"
+                            style={{ maxWidth: "100%" }}
+                        />
+                        {block.caption && (
+                            <figcaption className="fst-italic text-secondary mt-1">
+                                {block.caption}
+                            </figcaption>
+                        )}
+                    </figure>
                 );
             }
             default:
