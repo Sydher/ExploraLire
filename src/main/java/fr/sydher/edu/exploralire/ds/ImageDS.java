@@ -1,6 +1,7 @@
 package fr.sydher.edu.exploralire.ds;
 
 import io.quarkus.runtime.Startup;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
@@ -12,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+@Startup
 @ApplicationScoped
 public class ImageDS {
 
@@ -23,7 +25,7 @@ public class ImageDS {
         this.storageDir = Path.of(imagesPath);
     }
 
-    @Startup
+    @PostConstruct
     void init() {
         try {
             Files.createDirectories(storageDir);
@@ -34,6 +36,7 @@ public class ImageDS {
     }
 
     public String store(InputStream data, String originalFilename) throws IOException {
+        Files.createDirectories(storageDir);
         String extension = extractExtension(originalFilename);
         String filename = UUID.randomUUID() + extension;
         Path target = storageDir.resolve(filename);

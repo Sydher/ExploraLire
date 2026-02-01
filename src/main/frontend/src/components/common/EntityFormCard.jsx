@@ -18,7 +18,7 @@ export default function EntityFormCard({
                             Annuler
                         </button>
                         <button type="submit" className="btn btn-primary">
-                            {isCreating ? "Créer" : "Modifier"}
+                            {isCreating ? "Sauvegarder la nouvelle page" : "Sauvegarder les modifications"}
                         </button>
                     </div>
                 </form>
